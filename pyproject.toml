@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "kot-dos-project"
+version = "0.1.0"
+description = "First project on python with poetry"
+authors = ["Виталий Кот <lowkent2me@gmail.com>"]
+readme = "README.md"
+packages = [{include = "kot_dos_project"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[tool.poetry.group.dev]
+optional = true
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
