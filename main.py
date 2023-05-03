@@ -36,29 +36,43 @@ def write_account():
         for row in account_d:
             write_account.writerow(row)
 
-# def collector(cons_id, dict_c, term):
-#     """Функция списывает денежные средства со счёта клиента в течение года
-#     term - текущий год от 0"""
-#     for month in range(12):
-#         for cr_p in account_d: #инициируем процедуру перечисления средств
-#             if int(cr_p['id']) == int(cons_id):
-#                 if float(cr_p['amount']) >= float(dict_c['month_pay']):
-#                     cr_p['amount'] = int(cr_p['amount']) - int(dict_c['month_pay'])
-#                     account_d[0]['amount'] = int(account_d[0]['amount']) + int(dict_c['month_pay'])
-#                     dict_c['end_sum'] = int(dict_c['end_sum']) - int(dict_c['month_pay'])
-#                     # print('аккаунт ', cr_p['id'], ' выполнил обязательства по кредиту за ', month + 1, ' месяц')
-#                     # print('остаток на счёте аккаунта', cr_p['id'],'=',cr_p['amount'])
-#                     if month + 1 == 12:
-#                         print('аккаунт ', cr_p['id'], ' выполнил обязательства по кредиту за ', term, ' год')
-#                     write_account()
-#                 else: # Здесь будет альтернативное сообщение по долгу клиента
-#                     cr_p['amount'] = 0-dict_c['end_sum']
-#                     write_account()
-#                     print('у аккаунта', cr_p['id'], 'недостаточно средств для обеспечения обязательств по кредиту за '
-#                           , month + 1, ' месяц', term, 'года')
-#                     print('долг аккаунта', cr_p['id'], 'составляет', dict_c['end_sum'], 'денег')
-#                     cons_id = -1
-#                     break
+def collector(term):
+    """Функция списывает денежные средства со счёта клиента в течение года
+    term - текущий год от 0"""
+    for month in range(12):
+        time.sleep(1)
+        for credit_client in cons_c: #инициируем процедуру перечисления средств
+            for credit_c in account_d:
+                if int(credit_c['id']) == int(credit_client['id']):
+                    if float(credit_c['amount']) >= float(credit_client['month_pay']):
+                        if credit_client['end_sum'] <= credit_client['month_pay']:
+                            if month + 1 <= 1:
+                                credit_client['end_sum'] = 0
+                                print('аккаунт ', credit_c['id'], ' выполнил все обязательства по кредиту')
+                        else:
+                            credit_c['amount'] = int(credit_c['amount']) - int(credit_client['month_pay'])
+                            account_d[0]['amount'] = int(account_d[0]['amount']) + int(credit_client['month_pay'])
+                            credit_client['end_sum'] = int(credit_client['end_sum']) - int(credit_client['month_pay'])
+                            # print('аккаунт ', credit_c['id'], ' выполнил обязательства по кредиту за ', month + 1,
+                            # ' месяц')
+                            # print('остаток на счёте аккаунта', credit_c['id'],'=',credit_c['amount'])
+                            if month + 1 == 12:
+                                print('аккаунт ', credit_c['id'], ' выполнил обязательства по кредиту за ', term,
+                                      ' год')
+                            write_account()
+                    else: # Здесь будет альтернативное сообщение по долгу клиента
+                        if month + 1 <= 1:
+                            print('\nу аккаунта', credit_c['id'],
+                                  'недостаточно средств для обеспечения обязательств по кредиту за '
+                                  , month + 1, ' месяц', term, 'года')
+                            print('долг аккаунта', credit_c['id'], 'составляет',
+                                  credit_client['end_sum'], 'денег')
+                        credit_c['amount'] = 0-float('{:.2f}'.format(credit_client['month_pay']*1.2))
+                        print('Уважаемый клиент', credit_c['id'],
+                              '! Рекомендуем немедленно погасить долг по кредиту!\n', 'Пеня по кредиту составляет',
+                              float('{:.2f}'.format((credit_client['month_pay']*0.2))), 'денег\n')
+                        write_account()
+                        break
 
 def cashier(term):
     """Функция списывает денежные средства со счёта банка в течение года в пользу клиента по депозиту
@@ -136,7 +150,7 @@ for cr in credit_d: #находим запросы на получение кр�
                 account_d[0]['amount'] = int(account_d[0]['amount']) - int(cr['sum'])
                 cr_p['amount'] = int(cr_p['amount']) + int(cr['sum'])
                 cons_c.append(cr)
-# write_account()
+write_account()
 for cons_p in cons_c: # расчёт списания средств в счёт кредита
     attach_deposit(cons_p)
     c_pay = cons_p['month_pay']
@@ -147,8 +161,6 @@ for cons_p in cons_c: # расчёт списания средств в счёт
         print('\nаккаунт ', cons_p['id'], ' должен выплатить ', cons_p['end_sum'], 'денег в течение ', cons_p['term'],
               ' лет')
     print('ежемесячный платёж по кредиту составляет', c_pay, 'денег')
-    # for n in range(c_term):
-    #     collector(cons_p['id'], cons_p, n+1)
 # Создаём функцию расчёта депозитов
 cons_d = [] # формирование списка клиентов банка по депозиту
 for dep in deposit_d:
@@ -167,3 +179,4 @@ for vip in cons_d: # расчёт зачисления средств по де�
     print('ежемесячный платёж по депозиту составит', vip['month_pay'], 'денег')
 for i in range(5):
     cashier(i+1)
+    collector(i+1)
