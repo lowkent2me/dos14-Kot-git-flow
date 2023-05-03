@@ -8,11 +8,9 @@ import time
 # расчёт сложного процента
 def pow(x,y):
     """функция считает значение x в степени y"""
-    i = 1
     power = 1
     for i in range(y):
         power = power * x
-        i += i
     return power
 
 percent = lambda f_sum, f_perc: f_sum * f_perc # функция считает итоговую сумму сложного процента
@@ -29,7 +27,7 @@ def straight_perc(s,p,t: int):
     end_sum = float('{:.2f}'.format(raw_sum))
     return end_sum
 
-pay = lambda end_sum : float('{:.2f}'.format(end_sum / 12)) # расчёт ежемесячного платежа
+pay = lambda end_sum, term : float('{:.2f}'.format((end_sum / 12)/term)) # расчёт ежемесячного платежа
 
 def write_account():
     with open('./data/account.csv', 'w') as open_account: # Запись зменений в account.csv
@@ -129,7 +127,7 @@ for cons_p in cons_c: # расчёт списания средств в счёт
     c_perc = int(cons_p['percent'])
     c_term = int(cons_p['term'])
     c_esum = straight_perc(c_sum, c_perc, c_term)
-    c_pay = float('{:.2f}'.format(pay(c_esum) / c_term))
+    c_pay = float('{:.2f}'.format(pay(c_esum, c_term)))
     cons_p.update(end_sum=float(c_esum), month_pay=float(c_pay))
     if c_term == 1:
         print('аккаунт ', cons_p['id'], ' должен выплатить ', c_esum, 'денег в течение ', c_term, ' года')
@@ -150,7 +148,7 @@ for vip in cons_d: # расчёт зачисления средств по де�
     d_perc = vip['percent']
     d_term = vip['term']
     d_esum = straight_perc(d_sum, d_perc, d_term)
-    d_pay = float('{:.2f}'.format(pay(d_esum) / d_term))
+    d_pay = float('{:.2f}'.format(pay(d_esum, d_term)))
     vip.update(capital=float(d_esum), month_pay=float(d_pay))
     if d_term == 1:
         print('аккаунт ', vip['id'], ' получит выпллат на сумму', d_esum, 'денег в течение ', d_term, ' года')
