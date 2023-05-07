@@ -20,9 +20,6 @@ def straight_perc(s, p, t: int):
     return end_sum
 
 
-pay = lambda end_sum, term: float('{:.2f}'.format((end_sum / 12) / term))  # расчёт ежемесячного платежа
-
-
 def write_account():
     with open('./data/account.csv', 'w') as open_account:  # Запись изменений в account.csv
         write_account = csv.DictWriter(open_account, fieldnames=list(account_d[0].keys()))
@@ -115,12 +112,12 @@ def cashier(term):
 
 def attach_deposit(client):
     """Расчёт конечной суммы платежа в месяц (по депозиту/кредиту)"""
-    sum = client['sum']
+    s_sum = client['sum']
     perc = client['percent']
     term = client['term']
-    esum = straight_perc(sum, perc, term)
-    epay = float('{:.2f}'.format(pay(esum, term)))
-    client.update(end_sum=float(esum), month_pay=float(epay))
+    e_sum = straight_perc(s_sum, perc, term)
+    e_pay = float('{:.2f}'.format(((e_sum / 12) / term)))
+    client.update(end_sum=float(e_sum), month_pay=float(e_pay))
     return client
 
 
