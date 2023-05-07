@@ -58,7 +58,8 @@ def collector(term):
                               , month + 1, ' месяц', term, 'года')
                         print('долг аккаунта', credit_c['id'], 'составляет',
                               credit_client['end_sum'], 'денег')
-                    credit_c['amount'] = 0-float('{:.2f}'.format(credit_client['month_pay']*1.2))
+                    credit_c['amount'] = float('{:.2f}'.format(credit_c['amount'])) - \
+                                         float('{:.2f}'.format(credit_client['month_pay']*1.2))
                     print('\nУважаемый клиент', credit_c['id'],
                           '! Рекомендуем немедленно погасить долг по кредиту!',credit_client['end_sum'],
                           ' денег \n Пеня по кредиту составляет',
