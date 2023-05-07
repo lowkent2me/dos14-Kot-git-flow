@@ -35,8 +35,10 @@ def collector(term):
         for credit_c in account_d:
             if int(credit_c['id']) == int(credit_client['id']):
                 if float(credit_c['amount']) >= float(credit_client['month_pay']):
-                    if credit_client['end_sum'] <= credit_client['month_pay']:
-                        credit_client['end_sum'] = 0
+                    if credit_client['end_sum'] < credit_client['month_pay']:
+                        credit_c['amount'] = float('{:.2f}'.format(credit_c['amount'] -
+                                                                   float(credit_client['end_sum'])))
+                        credit_client['end_sum'] = credit_client['end_sum'] - credit_client['end_sum']
                         print('\nаккаунт ', credit_c['id'], ' выполнил все обязательства по кредиту')
                     else:
                         credit_c['amount'] = float('{:.2f}'.format(credit_c['amount'] -
@@ -47,16 +49,17 @@ def collector(term):
 
                         credit_client['end_sum'] = float('{:.2f}'.format(credit_client['end_sum']
                                                                          - float(credit_client['month_pay'])))
-                        # print('аккаунт ', credit_c['id'], ' выполнил обязательства по кредиту за ', month + 1,
-                        # ' месяц')
-                        # print('остаток на счёте аккаунта', credit_c['id'],'=',credit_c['amount'])
+                        print('аккаунт ', credit_c['id'], ' выполнил обязательства по кредиту за ', month + 1, ' месяц')
+                        print('остаток на счёте аккаунта', credit_c['id'], '=', credit_c['amount'])
                         if month + 1 == 12:
                             print('\nаккаунт ', credit_c['id'], ' выполнил обязательства по кредиту за ', term,
                                   ' год')
                         write_account()
                 else:  # Здесь будет альтернативное сообщение по долгу клиента
-                    if credit_client['end_sum'] <= credit_client['month_pay']:
-                        credit_client['end_sum'] = 0
+                    if credit_client['end_sum'] < credit_client['month_pay']:
+                        credit_c['amount'] = float('{:.2f}'.format(credit_c['amount'] -
+                                                                   float(credit_client['end_sum'])))
+                        credit_client['end_sum'] = credit_client['end_sum'] - credit_client['end_sum']
                         break
                     else:
                         # print('долг аккаунта', credit_c['id'], 'составляет',
@@ -103,10 +106,12 @@ def cashier(term):
         else:
             for vip_c in account_d:
                 if int(vip_c['id']) == int(vip_client['id']):
-                    account_d[0]['amount'] = float(account_d[0]['amount']) - float(vip_client['end_sum'])
+                    account_d[0]['amount'] = float('{:.2f}'.format(float(account_d[0]['amount'])
+                                                                   - float(vip_client['end_sum'])))
                     vip_c['amount'] = float(vip_c['amount']) + float(vip_client['end_sum'])
-                    vip_client['end_sum'] = 0
-                    vip_client['month_pay'] = 0
+                    vip_client['end_sum'] = vip_client['end_sum'] - vip_client['end_sum']
+                    vip_client['month_pay'] = vip_client['month_pay'] - vip_client['month_pay']
+                    write_account()
             continue
 
 
