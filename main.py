@@ -124,9 +124,6 @@ def main():
     for clients in bank_clients:
         if int(clients.term()) > max_term:
             max_term = int(clients.term())
-    #     for deposit in array_deposit:
-    #         if deposit['term'] > max_term:
-    #             max_term = int(deposit['term'])
     print('Period = '+str(max_term))
     with open('./data/transactions.csv', 'w') as open_trans:  # Создание файла transactions.csv
         header = ["user_id", "monthly_fee", "subtract/add"]
@@ -139,6 +136,20 @@ def main():
                 if clients.closed():
                     bank_clients.remove(clients)
                     print('Client '+str(clients.entity_id())+' was removed, cause client close his credit/deposit')
+                    if isinstance(clients, Credit):
+                        for c in db_dc:
+                            if c['entity_id'] == clients.entity_id():
+                                db_dc.remove(c)
+                                to_json = {"credit": db_dc, "deposit": db_dd}
+                                with open('./data/credits_deposits.json', 'w') as f:
+                                    json.dump(to_json, f)
+                    elif isinstance(clients, Deposit):
+                        for d in db_dd:
+                            if d['entity_id'] == clients.entity_id():
+                                db_dd.remove(d)
+                                to_json = {"credit": db_dc, "deposit": db_dd}
+                                with open('./data/credits_deposits.json', 'w') as f:
+                                    json.dump(to_json, f)
                 else:
                     clients.process()
 
