@@ -61,15 +61,17 @@ class Credit(BankProduct, ABC):
     #   Уменьшить periods на 1
     #   Если periods == 0 то closed = True
     def process(self):
-        if not self.__closed:
-            if self.__periods != 0:
-                with open('./data/transactions.csv', 'a') as open_trans:  # Запись изменений в transactions.csv
-                    file_writer = csv.writer(open_trans, delimiter=",")
-                    file_writer.writerow([self.entity_id(), self.monthly_fee(), 'sub'])
-                    file_writer.writerow(['0', self.monthly_fee(), 'add'])
-                self.__periods -= 1
-            else:
+        if self.__periods > 0:
+            with open('./data/transactions.csv', 'a') as open_trans:  # Запись изменений в transactions.csv
+                file_writer = csv.writer(open_trans, delimiter=",")
+                file_writer.writerow([self.entity_id(), self.monthly_fee(), 'sub'])
+                file_writer.writerow(['0', self.monthly_fee(), 'add'])
+            self.__periods = self.__periods - 1
+            if self.__periods == 0:
                 self.__closed = True
+        else:
+            self.__closed = True
+
 # Создать класс Deposit
 #   Унаследоваться от BankProduct
 #   Создать свойство только на чтение periods = term*12
@@ -93,15 +95,17 @@ class Deposit(BankProduct, ABC):
     #   Уменьшить periods на 1
     #   Если periods == 0 то closed = True
     def process(self):
-        if not self.__closed:
-            if self.__periods != 0:
-                with open('./data/transactions.csv', 'a') as open_trans:  # Запись изменений в transactions.csv
-                    file_writer = csv.writer(open_trans, delimiter=",")
-                    file_writer.writerow(['0', self.monthly_fee(), 'add'])
-                    file_writer.writerow([self.entity_id(), self.monthly_fee(), 'sub'])
-                self.__periods -= 1
-            else:
+        if self.__periods > 0:
+            with open('./data/transactions.csv', 'a') as open_trans:  # Запись изменений в transactions.csv
+                file_writer = csv.writer(open_trans, delimiter=",")
+                file_writer.writerow(['0', self.monthly_fee(), 'add'])
+                file_writer.writerow([self.entity_id(), self.monthly_fee(), 'sub'])
+            self.__periods = self.__periods - 1
+            if self.__periods == 0:
                 self.__closed = True
+        else:
+            self.__closed = True
+
 
 def main():
     with open('./data/credits_deposits.json', 'r') as open_db:
@@ -129,10 +133,12 @@ def main():
         header = ["user_id", "monthly_fee", "subtract/add"]
         file_writer = csv.writer(open_trans, delimiter=",", lineterminator="\r",)
         file_writer.writerow(header)
-    for year in range(1, max_term):
-        for month in range(1, 12):
+    for year in range(max_term):
+        print('Year '+str(year+1))
+        for month in range(12):
             time.sleep(0.2)
             for clients in bank_clients:
+                clients.process()
                 if clients.closed():
                     bank_clients.remove(clients)
                     print('Client '+str(clients.entity_id())+' was removed, cause client close his credit/deposit')
@@ -150,9 +156,6 @@ def main():
                                 to_json = {"credit": db_dc, "deposit": db_dd}
                                 with open('./data/credits_deposits.json', 'w') as f:
                                     json.dump(to_json, f)
-                else:
-                    clients.process()
-
 
 
 main()
