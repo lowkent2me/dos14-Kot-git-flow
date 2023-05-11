@@ -9,7 +9,8 @@ packages = [{include = "kot_dos_project"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 pyyaml = "^6.0"
-
+account = { git = "https://github.com/ggramal/dos14-gramovich-git-flow.git" }
+flask = "^2.3.2"
 
 [tool.poetry.group.dev]
 optional = true
