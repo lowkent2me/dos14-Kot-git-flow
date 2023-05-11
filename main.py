@@ -2,7 +2,6 @@ from abc import abstractmethod, ABC
 import csv
 import time
 import yaml
-import json
 
 
 class BankProduct:  # Создание класса BankProduct
@@ -84,8 +83,8 @@ class Deposit(BankProduct, ABC):  # Создать класс Deposit, насл�
             else:
                 with open('./data/transactions.csv', 'a') as open_trans:  # Запись изменений в transactions.csv
                     file_writer = csv.writer(open_trans, delimiter=",")
-                    file_writer.writerow(['0', self.monthly_fee(), 'add'])
-                    file_writer.writerow([self.client_id(), self.monthly_fee(), 'sub'])
+                    file_writer.writerow(['0', self.monthly_fee(), 'sub'])
+                    file_writer.writerow([self.client_id(), self.monthly_fee(), 'add'])
 
 
 def main():
@@ -115,7 +114,6 @@ def main():
     for month in range(max_term*12):
         time.sleep(1)  # МЕСЯЦ = 1 секунда
         for clients in bank_clients:  # Каждый месяц вызываем у этих объектов метод process
-            print('Monthly fee for client '+str(clients.client_id())+' ='+str(clients.monthly_fee()))
             clients.process()
             if clients.closed():  # Если кредит, депозит закрыт
                 if isinstance(clients, Credit):
