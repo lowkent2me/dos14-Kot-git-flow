@@ -2,6 +2,7 @@ from abc import abstractmethod, ABC
 from account_clients import AccountClient
 import time
 import yaml
+from flask import Flask
 
 
 class BankProduct:  # Создание класса BankProduct
@@ -136,6 +137,15 @@ def main():
                             with open('./data/result.yaml', 'w') as f:
                                 yaml.dump(to_yaml, f)
                             print('Client '+str(clients.client_id())+' close his deposit')
+
+
+"""Some flask"""
+app = Flask(__name__)
+
+
+@app.route("/api/v1/credits/", methods=["GET"])
+def credits_id():
+    return 'You found me'
 
 
 main()
