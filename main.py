@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-import csv
+from account_clients import AccountClient
 import time
 import yaml
 
@@ -35,6 +35,8 @@ class BankProduct:  # Создание класса BankProduct
 class Credit(BankProduct, ABC):  # Создание класса Credit, наследник BankProduct
     def __init__(self, client_id, percent, term, a_sum):
         BankProduct.__init__(self, client_id, percent, term, a_sum)
+        acc_cl = AccountClient(self.client_id())
+        acc_cl.transaction(add=self.a_sum())
         self.__periods = self.term() * 12
         self.__closed = False
 
@@ -53,16 +55,20 @@ class Credit(BankProduct, ABC):  # Создание класса Credit, нас�
             if self.__periods == 0:  # Если periods == 0 то closed = True
                 self.__closed = True
             else:
-                with open('./data/transactions.csv', 'a') as open_trans:  # Запись транзакции в файл transactions.csv
-                    file_writer = csv.writer(open_trans, delimiter=",")
-                    file_writer.writerow([self.client_id(), self.monthly_fee(),
-                                          'sub'])  # user_id,monthly_fee,'subtract'
-                    file_writer.writerow(['0', self.monthly_fee(), 'add'])  # 0,monthly_fee,'add'
+                cl_credit = AccountClient(self.client_id())
+                cl_credit.transaction(self.monthly_fee(), 0)
+                # with open('./data/transactions.csv', 'a') as open_trans:  # Запись транзакции в файл transactions.csv
+                #     file_writer = csv.writer(open_trans, delimiter=",")
+                #     file_writer.writerow([self.client_id(), self.monthly_fee(),
+                #                           'sub'])  # user_id,monthly_fee,'subtract'
+                #     file_writer.writerow(['0', self.monthly_fee(), 'add'])  # 0,monthly_fee,'add'
 
 
 class Deposit(BankProduct, ABC):  # Создать класс Deposit, наследник BankProduct
     def __init__(self, client_id, percent, term, a_sum):
         BankProduct.__init__(self, client_id, percent, term, a_sum)
+        acc_cl = AccountClient(self.client_id())
+        acc_cl.withdraw = False
         self.__periods = self.term() * 12
         self.__closed = False
 
@@ -81,10 +87,12 @@ class Deposit(BankProduct, ABC):  # Создать класс Deposit, насл�
             if self.__periods == 0:
                 self.__closed = True
             else:
-                with open('./data/transactions.csv', 'a') as open_trans:  # Запись изменений в transactions.csv
-                    file_writer = csv.writer(open_trans, delimiter=",")
-                    file_writer.writerow(['0', self.monthly_fee(), 'sub'])
-                    file_writer.writerow([self.client_id(), self.monthly_fee(), 'add'])
+                cl_deposit = AccountClient(self.client_id())
+                cl_deposit.transaction(substract=0, add=self.monthly_fee())
+                # with open('./data/transactions.csv', 'a') as open_trans:  # Запись изменений в transactions.csv
+                #     file_writer = csv.writer(open_trans, delimiter=",")
+                #     file_writer.writerow(['0', self.monthly_fee(), 'sub'])
+                #     file_writer.writerow([self.client_id(), self.monthly_fee(), 'add'])
 
 
 def main():
@@ -107,10 +115,6 @@ def main():
         if int(clients.term()) > max_term:
             max_term = int(clients.term())
     print('Period = '+str(max_term)+' year(s)')
-    with open('./data/transactions.csv', 'w') as open_trans:  # Создание файла transactions.csv
-        header = ["user_id", "monthly_fee", "subtract/add"]
-        file_writer = csv.writer(open_trans, delimiter=",", lineterminator="\r",)
-        file_writer.writerow(header)
     for month in range(max_term*12):
         time.sleep(1)  # МЕСЯЦ = 1 секунда
         for clients in bank_clients:  # Каждый месяц вызываем у этих объектов метод process
@@ -121,7 +125,7 @@ def main():
                         if c['client_id'] == clients.client_id():
                             db_dc.remove(c)  # удаляем его из списка
                             to_yaml = {"credit": db_dc, "deposit": db_dd}
-                            with open('./data/credits_deposits.yaml', 'w') as f:
+                            with open('./data/result.yaml', 'w') as f:
                                 yaml.dump(to_yaml, f)  # пишем в бд (файл credits_deposits.yaml)
                             print('Client '+str(clients.client_id())+' close his credit')
                 elif isinstance(clients, Deposit):
@@ -129,7 +133,7 @@ def main():
                         if d['client_id'] == clients.client_id():
                             db_dd.remove(d)
                             to_yaml = {"credit": db_dc, "deposit": db_dd}
-                            with open('./data/credits_deposits.yaml', 'w') as f:
+                            with open('./data/result.yaml', 'w') as f:
                                 yaml.dump(to_yaml, f)
                             print('Client '+str(clients.client_id())+' close his deposit')
 
