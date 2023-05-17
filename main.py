@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from account_clients import AccountClient
 import time
 import yaml
-from flask import Flask, make_response
+from flask import Flask, make_response, request
 
 
 class BankProduct:  # Создание класса BankProduct
@@ -133,11 +133,7 @@ for deposit_client in db_dd:
     deposit = Deposit(client_id=deposit_client['client_id'], percent=deposit_client['percent'],
                       term=deposit_client['term'],  a_sum=deposit_client['sum'])
     bank_clients.append(deposit)
-max_term = 0
-for clients in bank_clients:
-    if int(clients.term()) > max_term:
-        max_term = int(clients.term())
-# print('Period = '+str(max_term)+' year(s)')
+
 
 """Some flask"""
 app = Flask(__name__)
@@ -175,6 +171,22 @@ def f_deposits():
     return x
 
 
+@app.route("/api/v1/credits", methods=["PUT"])
+def create_account(client_id):
+    account = request.json
+    response = make_response({"status": "error", "message": f"Credit for client {client_id} already exists"})
+    response.status = 400
+    for accounts in bank_clients:
+        if account[client_id] != accounts.client_id():
+            account[client_id] = Credit(**account)
+            db_dc.append(account.show_c)
+            bank_clients.append(account)
+        response = make_response({"status": "ok", "message": f"Account for {client_id} created"})
+        response.status = 201
+
+    return response
+
+
 @app.route("/api/v1/credits", methods=["GET"])
 def f_credits():
     show = []
@@ -185,26 +197,37 @@ def f_credits():
     return x
 
 
-for month in range(max_term*12):
-    # time.sleep(1)  # МЕСЯЦ = 1 секунда
-    for clients in bank_clients:  # Каждый месяц вызываем у этих объектов метод process
-        clients.process()
-        if clients.closed():  # Если кредит, депозит закрыт
-            if isinstance(clients, Credit):
-                for c in db_dc:
-                    if c['client_id'] == clients.client_id():
-                        db_dc.remove(c)  # удаляем его из списка
-                        to_yaml = {"credit": db_dc, "deposit": db_dd}
-                        with open('./data/result.yaml', 'w') as f:
-                            yaml.dump(to_yaml, f)  # пишем в бд (файл credits_deposits.yaml)
-                        # print('Client '+str(clients.client_id())+' close his credit')
-            elif isinstance(clients, Deposit):
-                for d in db_dd:
-                    if d['client_id'] == clients.client_id():
-                        db_dd.remove(d)
-                        to_yaml = {"credit": db_dc, "deposit": db_dd}
-                        with open('./data/result.yaml', 'w') as f:
-                            yaml.dump(to_yaml, f)
-                        # print('Client '+str(clients.client_id())+' close his deposit')
+@app.route("/api/v1/credits", methods=["GET"])
+def start():
+    max_term = 0
+    for clients in bank_clients:
+        if int(clients.term()) > max_term:
+            max_term = int(clients.term())
+        print('Period = '+str(max_term)+' year(s)')
+    for month in range(max_term*12):
+        # time.sleep(1)  # МЕСЯЦ = 1 секунда
+        for clients in bank_clients:  # Каждый месяц вызываем у этих объектов метод process
+            clients.process()
+            if clients.closed():  # Если кредит, депозит закрыт
+                if isinstance(clients, Credit):
+                    for c in db_dc:
+                        if c['client_id'] == clients.client_id():
+                            db_dc.remove(c)  # удаляем его из списка
+                            to_yaml = {"credit": db_dc, "deposit": db_dd}
+                            with open('./data/result.yaml', 'w') as f:
+                                yaml.dump(to_yaml, f)  # пишем в бд (файл credits_deposits.yaml)
+                            print('Client '+str(clients.client_id())+' close his credit')
+                elif isinstance(clients, Deposit):
+                    for d in db_dd:
+                        if d['client_id'] == clients.client_id():
+                            db_dd.remove(d)
+                            to_yaml = {"credit": db_dc, "deposit": db_dd}
+                            with open('./data/result.yaml', 'w') as f:
+                                yaml.dump(to_yaml, f)
+                            print('Client '+str(clients.client_id())+' close his deposit')
 
+
+if __name__ == '__main__':
+    app.run(debug=False)
 # main()
+# curl -X PUT -d '{"client_id": "15", "percent": "10", "sum": "1000", "term": "1"}' localhost:5000/api/v1/credits
