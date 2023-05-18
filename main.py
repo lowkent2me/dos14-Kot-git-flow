@@ -172,18 +172,17 @@ def f_deposits():
 
 
 @app.route("/api/v1/credits", methods=["PUT"])
-def create_account(client_id):
+def create_account():
     account = request.json
-    response = make_response({"status": "error", "message": f"Credit for client {client_id} already exists"})
+    op_account = account
+    response = make_response({"status": "error", "message": f"Credit for client {account['client_id']} already exists"})
     response.status = 400
-    for accounts in bank_clients:
-        if account[client_id] != accounts.client_id():
-            account[client_id] = Credit(**account)
-            db_dc.append(account.show_c)
-            bank_clients.append(account)
-        response = make_response({"status": "ok", "message": f"Account for {client_id} created"})
+    if account not in bank_clients:
+        op_account = Credit(**account)
+        db_dc.append(op_account.show_c())
+        bank_clients.append(op_account)
+        response = make_response({"status": "ok", "message": f"Account for {account['client_id']} created"})
         response.status = 201
-
     return response
 
 
@@ -230,4 +229,4 @@ def start():
 if __name__ == '__main__':
     app.run(debug=False)
 # main()
-# curl -X PUT -d '{"client_id": "15", "percent": "10", "sum": "1000", "term": "1"}' localhost:5000/api/v1/credits
+# curl -X PUT -H "Content-type: application/json" -d '{"client_id": 15, "percent": 10, "a_sum": 1000, "term": 1}' localhost:5000/api/v1/credits
