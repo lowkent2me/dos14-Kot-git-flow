@@ -52,13 +52,21 @@ class Credit(BankProduct, ABC):  # Создание класса Credit, нас�
 
     def show_c(self):
         return {
-            "Client ID": self.client_id(),
-            "Percent": self.percent(),
-            "Term": self.term(),
-            "Credit sum": self.a_sum(),
-            "Amount to be repaid": self.end_sum(),
-            "Monthly fee": self.monthly_fee(),
-            "Closed": self.closed()
+            "client_id": self.client_id(),
+            "percent": self.percent(),
+            "term": self.term(),
+            "sum": self.a_sum(),
+            "end_sum": self.end_sum(),
+            "monthly_fee": self.monthly_fee(),
+            "closed": self.closed()
+        }
+
+    def filed(self):
+        return {
+            "client_id": self.client_id(),
+            "percent": self.percent(),
+            "term": self.term(),
+            "sum": self.a_sum()
         }
 
     def process(self):  # Реализация метода process
@@ -95,13 +103,21 @@ class Deposit(BankProduct, ABC):  # Создать класс Deposit, насл�
 
     def show_d(self):
         return {
-            "Client ID": self.client_id(),
-            "Percent": self.percent(),
-            "Term": self.term(),
-            "Deposit amount": self.a_sum(),
-            "Amount to be repaid": self.end_sum(),
-            "Monthly fee": self.monthly_fee(),
-            "Closed": self.closed()
+            "client_id": self.client_id(),
+            "percent": self.percent(),
+            "term": self.term(),
+            "sum": self.a_sum(),
+            "end_sum": self.end_sum(),
+            "monthly_fee": self.monthly_fee(),
+            "closed": self.closed()
+        }
+
+    def filed(self):
+        return {
+            "client_id": self.client_id(),
+            "percent": self.percent(),
+            "term": self.term(),
+            "sum": self.a_sum()
         }
 
     def process(self):  # Реализация метода process аналогична process Credit
@@ -133,6 +149,17 @@ for deposit_client in db_dd:
     deposit = Deposit(client_id=deposit_client['client_id'], percent=deposit_client['percent'],
                       term=deposit_client['term'],  a_sum=deposit_client['sum'])
     bank_clients.append(deposit)
+check = []
+for a in db_dd:
+    check.append(a['client_id'])
+for b in db_dc:
+    check.append(b['client_id'])
+
+
+def update_file():
+    to_yaml = {"credit": db_dc, "deposit": db_dd}
+    with open('./data/credits_deposits.yaml', 'w') as f:
+        yaml.dump(to_yaml, f)
 
 
 """Some flask"""
@@ -172,15 +199,35 @@ def f_deposits():
 
 
 @app.route("/api/v1/credits", methods=["PUT"])
-def create_account():
+def create_account_c():
     account = request.json
     op_account = account
     response = make_response({"status": "error", "message": f"Credit for client {account['client_id']} already exists"})
     response.status = 400
-    if account not in bank_clients:
+    if account['client_id'] not in check:
+        check.append(account['client_id'])
         op_account = Credit(**account)
-        db_dc.append(op_account.show_c())
+        db_dc.append(op_account.filed())
         bank_clients.append(op_account)
+        update_file()
+        response = make_response({"status": "ok", "message": f"Account for {account['client_id']} created"})
+        response.status = 201
+    return response
+
+
+@app.route("/api/v1/deposits", methods=["PUT"])
+def create_account_d():
+    account = request.json
+    op_account = account
+    response = make_response({"status": "error",
+                              "message": f"Deposit for client {account['client_id']} already exists"})
+    response.status = 400
+    if account['client_id'] not in check:
+        check.append(account['client_id'])
+        op_account = Deposit(**account)
+        db_dd.append(op_account.filed())
+        bank_clients.append(op_account)
+        update_file()
         response = make_response({"status": "ok", "message": f"Account for {account['client_id']} created"})
         response.status = 201
     return response
@@ -229,4 +276,5 @@ def start():
 if __name__ == '__main__':
     app.run(debug=False)
 # main()
-# curl -X PUT -H "Content-type: application/json" -d '{"client_id": 15, "percent": 10, "a_sum": 1000, "term": 1}' localhost:5000/api/v1/credits
+# curl -X PUT -H "Content-type: application/json" -d '{"client_id": 15, "percent": 10,
+# "a_sum": 1000, "term": 1}' localhost:5000/api/v1/credits

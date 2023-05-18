@@ -29,19 +29,17 @@ credit:
   periods: -1
   sum: 200000
   term: 3
-- client_id: 15
-  closed: false
-  end_sum: 1100.0
-  monthly_fee: 91.67
-  percent: 10
-  sum: 1000
-  term: 1
 deposit:
 - client_id: 3
   percent: 10
   periods: -1
   sum: 10000
   term: 2
+- client_id: 8
+  percent: 11
+  periods: -1
+  sum: 20000
+  term: 4
 - client_id: 4
   percent: 11
   periods: -1
@@ -52,11 +50,6 @@ deposit:
   periods: -1
   sum: 500000
   term: 3
-- client_id: 8
-  percent: 11
-  periods: -1
-  sum: 20000
-  term: 4
 - client_id: 13
   percent: 10
   periods: -1
