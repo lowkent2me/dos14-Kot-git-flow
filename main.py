@@ -1,8 +1,9 @@
 from abc import abstractmethod, ABC
 from account_clients import AccountClient
-import time
 import yaml
 from flask import Flask, make_response, request
+from threading import Thread
+import time
 
 
 class BankProduct:  # Создание класса BankProduct
@@ -77,11 +78,6 @@ class Credit(BankProduct, ABC):  # Создание класса Credit, нас�
             else:
                 cl_credit = AccountClient(self.client_id())
                 cl_credit.transaction(self.monthly_fee(), 0)
-                # with open('./data/transactions.csv', 'a') as open_trans:  # Запись транзакции в файл transactions.csv
-                #     file_writer = csv.writer(open_trans, delimiter=",")
-                #     file_writer.writerow([self.client_id(), self.monthly_fee(),
-                #                           'sub'])  # user_id,monthly_fee,'subtract'
-                #     file_writer.writerow(['0', self.monthly_fee(), 'add'])  # 0,monthly_fee,'add'
 
 
 class Deposit(BankProduct, ABC):  # Создать класс Deposit, наследник BankProduct
@@ -128,35 +124,32 @@ class Deposit(BankProduct, ABC):  # Создать класс Deposit, насл�
             else:
                 cl_deposit = AccountClient(self.client_id())
                 cl_deposit.transaction(substract=0, add=self.monthly_fee())
-                # with open('./data/transactions.csv', 'a') as open_trans:  # Запись изменений в transactions.csv
-                #     file_writer = csv.writer(open_trans, delimiter=",")
-                #     file_writer.writerow(['0', self.monthly_fee(), 'sub'])
-                #     file_writer.writerow([self.client_id(), self.monthly_fee(), 'add'])
 
 
-# def main():
-with open('./data/credits_deposits.yaml', 'r') as open_db:
-    read_db = open_db.read()
-    db_ds = yaml.load(read_db, Loader=yaml.FullLoader)  # Из базы данных credits_deposits.yaml получаем данные
-db_dc = sorted(db_ds['credit'], key=lambda dictionary_c: dictionary_c['client_id'])  # Словарь клиентов кредита
-db_dd = sorted(db_ds['deposit'], key=lambda dictionary_c: dictionary_c['client_id'])  # Словарь клиентов депозита
-bank_clients = []  # На их основании создаём объекты Кредитов и депозитов
-for credit_client in db_dc:
-    credit = Credit(client_id=credit_client['client_id'], percent=credit_client['percent'],
-                    term=credit_client['term'],  a_sum=credit_client['sum'])
-    bank_clients.append(credit)
-for deposit_client in db_dd:
-    deposit = Deposit(client_id=deposit_client['client_id'], percent=deposit_client['percent'],
-                      term=deposit_client['term'],  a_sum=deposit_client['sum'])
-    bank_clients.append(deposit)
-check = []
-for a in db_dd:
-    check.append(a['client_id'])
-for b in db_dc:
-    check.append(b['client_id'])
+def data_read():
+    with open('./data/credits_deposits.yaml', 'r') as open_db:
+        read_db = open_db.read()
+        db_ds = yaml.load(read_db, Loader=yaml.FullLoader)  # Из базы данных credits_deposits.yaml получаем данные
+    db_dc = sorted(db_ds['credit'], key=lambda dictionary_c: dictionary_c['client_id'])  # Словарь клиентов кредита
+    db_dd = sorted(db_ds['deposit'], key=lambda dictionary_c: dictionary_c['client_id'])  # Словарь клиентов депозита
+    bank_clients = []  # На их основании создаём объекты Кредитов и депозитов
+    for credit_client in db_dc:
+        credit = Credit(client_id=credit_client['client_id'], percent=credit_client['percent'],
+                        term=credit_client['term'],  a_sum=credit_client['sum'])
+        bank_clients.append(credit)
+    for deposit_client in db_dd:
+        deposit = Deposit(client_id=deposit_client['client_id'], percent=deposit_client['percent'],
+                          term=deposit_client['term'],  a_sum=deposit_client['sum'])
+        bank_clients.append(deposit)
+    check = []
+    for a in db_dd:
+        check.append(a['client_id'])
+    for b in db_dc:
+        check.append(b['client_id'])
+    return [db_dc, db_dd, bank_clients, check]
 
 
-def update_file():
+def update_file(db_dc, db_dd):
     to_yaml = {"credit": db_dc, "deposit": db_dd}
     with open('./data/credits_deposits.yaml', 'w') as f:
         yaml.dump(to_yaml, f)
@@ -168,6 +161,7 @@ app = Flask(__name__)
 
 @app.route("/api/v1/credits/<int:client_id>", methods=["GET"])
 def f_credits_id(client_id):
+    db_dc, db_dd, bank_clients, check = data_read()
     response = make_response({"status": "error", "message": f"Client {client_id} does not have active credits"})
     for accounts in bank_clients:
         if isinstance(accounts, Credit):
@@ -179,6 +173,7 @@ def f_credits_id(client_id):
 
 @app.route("/api/v1/deposits/<int:client_id>", methods=["GET"])
 def f_deposits_id(client_id):
+    db_dc, db_dd, bank_clients, check = data_read()
     response = make_response({"status": "error", "message": f"Client {client_id} does not have active deposits"})
     for accounts in bank_clients:
         if isinstance(accounts, Deposit):
@@ -190,6 +185,7 @@ def f_deposits_id(client_id):
 
 @app.route("/api/v1/deposits", methods=["GET"])
 def f_deposits():
+    db_dc, db_dd, bank_clients, check = data_read()
     show = []
     for accounts in bank_clients:
         if isinstance(accounts, Deposit):
@@ -200,6 +196,7 @@ def f_deposits():
 
 @app.route("/api/v1/credits", methods=["PUT"])
 def create_account_c():
+    db_dc, db_dd, bank_clients, check = data_read()
     account = request.json
     op_account = account
     response = make_response({"status": "error", "message": f"Credit for client {account['client_id']} already exists"})
@@ -209,7 +206,7 @@ def create_account_c():
         op_account = Credit(**account)
         db_dc.append(op_account.filed())
         bank_clients.append(op_account)
-        update_file()
+        update_file(db_dc, db_dd)
         response = make_response({"status": "ok", "message": f"Account for {account['client_id']} created"})
         response.status = 201
     return response
@@ -217,6 +214,7 @@ def create_account_c():
 
 @app.route("/api/v1/deposits", methods=["PUT"])
 def create_account_d():
+    db_dc, db_dd, bank_clients, check = data_read()
     account = request.json
     op_account = account
     response = make_response({"status": "error",
@@ -227,7 +225,7 @@ def create_account_d():
         op_account = Deposit(**account)
         db_dd.append(op_account.filed())
         bank_clients.append(op_account)
-        update_file()
+        update_file(db_dc, db_dd)
         response = make_response({"status": "ok", "message": f"Account for {account['client_id']} created"})
         response.status = 201
     return response
@@ -235,6 +233,7 @@ def create_account_d():
 
 @app.route("/api/v1/credits", methods=["GET"])
 def f_credits():
+    db_dc, db_dd, bank_clients, check = data_read()
     show = []
     for accounts in bank_clients:
         if isinstance(accounts, Credit):
@@ -243,15 +242,15 @@ def f_credits():
     return x
 
 
-@app.route("/api/v1/credits", methods=["GET"])
-def start():
+def start_f():
+    db_dc, db_dd, bank_clients, check = data_read()
     max_term = 0
     for clients in bank_clients:
         if int(clients.term()) > max_term:
             max_term = int(clients.term())
-        print('Period = '+str(max_term)+' year(s)')
+    print('Period = '+str(max_term)+' year(s)')
     for month in range(max_term*12):
-        # time.sleep(1)  # МЕСЯЦ = 1 секунда
+        time.sleep(1)  # МЕСЯЦ = 1 секунда
         for clients in bank_clients:  # Каждый месяц вызываем у этих объектов метод process
             clients.process()
             if clients.closed():  # Если кредит, депозит закрыт
@@ -259,22 +258,19 @@ def start():
                     for c in db_dc:
                         if c['client_id'] == clients.client_id():
                             db_dc.remove(c)  # удаляем его из списка
-                            to_yaml = {"credit": db_dc, "deposit": db_dd}
-                            with open('./data/result.yaml', 'w') as f:
-                                yaml.dump(to_yaml, f)  # пишем в бд (файл credits_deposits.yaml)
+                            update_file(db_dc, db_dd)
                             print('Client '+str(clients.client_id())+' close his credit')
                 elif isinstance(clients, Deposit):
                     for d in db_dd:
                         if d['client_id'] == clients.client_id():
                             db_dd.remove(d)
-                            to_yaml = {"credit": db_dc, "deposit": db_dd}
-                            with open('./data/result.yaml', 'w') as f:
-                                yaml.dump(to_yaml, f)
+                            update_file(db_dc, db_dd)
                             print('Client '+str(clients.client_id())+' close his deposit')
 
 
+start = Thread(target=start_f())
+start.start()
 if __name__ == '__main__':
     app.run(debug=False)
-# main()
 # curl -X PUT -H "Content-type: application/json" -d '{"client_id": 15, "percent": 10,
 # "a_sum": 1000, "term": 1}' localhost:5000/api/v1/credits
