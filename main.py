@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from account_clients import AccountClient
+from account_clients import AccountClient  # Импорт библиотек @ggramal для 19 домашней работы
 import yaml
 from flask import Flask, make_response, request
 from threading import Thread
@@ -268,7 +268,7 @@ def start_f():
                             print('Client '+str(clients.client_id())+' close his deposit')
 
 
-start = Thread(target=start_f())
+start = Thread(target=start_f)
 start.start()
 if __name__ == '__main__':
     app.run(debug=False)
