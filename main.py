@@ -3,6 +3,7 @@ from account_clients import AccountClient  # Импорт библиотек @gg
 import yaml
 from flask import Flask, make_response, request
 from threading import Thread
+import os
 import time
 
 
@@ -67,7 +68,9 @@ class Credit(BankProduct, ABC):  # Создание класса Credit, нас�
             "client_id": self.client_id(),
             "percent": self.percent(),
             "term": self.term(),
-            "sum": self.a_sum()
+            "sum": self.a_sum(),
+            "credit": 1,
+            "deposit": 0
         }
 
     def process(self):  # Реализация метода process
@@ -105,7 +108,9 @@ class Deposit(BankProduct, ABC):  # Создать класс Deposit, насл�
             "sum": self.a_sum(),
             "end_sum": self.end_sum(),
             "monthly_fee": self.monthly_fee(),
-            "closed": self.closed()
+            "closed": self.closed(),
+            "credit": 0,
+            "deposit": 1
         }
 
     def filed(self):
@@ -203,9 +208,13 @@ def create_account_c():
     response.status = 400
     if account['client_id'] not in check:
         check.append(account['client_id'])
-        op_account = Credit(**account)
-        db_dc.append(op_account.filed())
-        bank_clients.append(op_account)
+        # op_account = Credit(**account)
+        # db_dc.append(op_account.filed())
+        # bank_clients.append(op_account)
+        # update_file(db_dc, db_dd)
+        db_dc.append(op_account)
+        # with open('./data/credits_deposits.yaml', 'w') as f:
+        #     yaml.dump(op_account, f)
         update_file(db_dc, db_dd)
         response = make_response({"status": "ok", "message": f"Account for {account['client_id']} created"})
         response.status = 201
@@ -222,10 +231,12 @@ def create_account_d():
     response.status = 400
     if account['client_id'] not in check:
         check.append(account['client_id'])
-        op_account = Deposit(**account)
-        db_dd.append(op_account.filed())
-        bank_clients.append(op_account)
-        update_file(db_dc, db_dd)
+        # op_account = Deposit(**account)
+        # db_dd.append(op_account.filed())
+        # bank_clients.append(op_account)
+        # update_file(db_dc, db_dd)
+        with open('./data/credits_deposits.yaml', 'w') as f:
+            yaml.dump(op_account, f)
         response = make_response({"status": "ok", "message": f"Account for {account['client_id']} created"})
         response.status = 201
     return response
@@ -244,13 +255,22 @@ def f_credits():
 
 def start_f():
     db_dc, db_dd, bank_clients, check = data_read()
-    max_term = 0
-    for clients in bank_clients:
-        if int(clients.term()) > max_term:
-            max_term = int(clients.term())
-    print('Period = '+str(max_term)+' year(s)')
-    for month in range(max_term*12):
-        time.sleep(1)  # МЕСЯЦ = 1 секунда
+    while True:
+        # if os.path.exists('./data/buffer.yaml'):
+        #     with open('./data/buffer.yaml', 'r') as open_db:
+        #         read_db = open_db.read()
+        #         db_nu = yaml.load(read_db, Loader=yaml.FullLoader)
+        #     if db_nu['credit'] == 1:
+        #         db_nu = Credit(client_id=db_nu['client_id'], percent=db_nu['percent'],
+        #                        term=db_nu['term'],  a_sum=db_nu['sum'])
+        #         db_dc.append(db_nu.filed())
+        #     elif db_nu['deposit'] == 1:
+        #         db_nu = Deposit(client_id=db_nu['client_id'], percent=db_nu['percent'],
+        #                         term=db_nu['term'],  a_sum=db_nu['sum'])
+        #         db_dd.append(db_nu.filed())
+        #     bank_clients.append(db_nu)
+        #     os.remove('./data/buffer.yaml')
+        # time.sleep(1)  # МЕСЯЦ = 1 секунда
         for clients in bank_clients:  # Каждый месяц вызываем у этих объектов метод process
             clients.process()
             if clients.closed():  # Если кредит, депозит закрыт
