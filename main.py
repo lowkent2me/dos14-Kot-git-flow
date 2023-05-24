@@ -3,7 +3,6 @@ from account_clients import AccountClient  # Импорт библиотек @gg
 import yaml
 from flask import Flask, make_response, request
 from threading import Thread
-import os
 import time
 
 
@@ -249,20 +248,6 @@ def f_credits():
 
 def start_f():
     while True:
-        # if os.path.exists('./data/buffer.yaml'):
-        #     with open('./data/buffer.yaml', 'r') as open_db:
-        #         read_db = open_db.read()
-        #         db_nu = yaml.load(read_db, Loader=yaml.FullLoader)
-        #     if db_nu['credit'] == 1:
-        #         db_nu = Credit(client_id=db_nu['client_id'], percent=db_nu['percent'],
-        #                        term=db_nu['term'],  a_sum=db_nu['sum'])
-        #         db_dc.append(db_nu.filed())
-        #     elif db_nu['deposit'] == 1:
-        #         db_nu = Deposit(client_id=db_nu['client_id'], percent=db_nu['percent'],
-        #                         term=db_nu['term'],  a_sum=db_nu['sum'])
-        #         db_dd.append(db_nu.filed())
-        #     bank_clients.append(db_nu)
-        #     os.remove('./data/buffer.yaml')
         time.sleep(1)  # МЕСЯЦ = 1 секунда
         for clients in bank_clients:  # Каждый месяц вызываем у этих объектов метод process
             clients.process()
@@ -270,12 +255,20 @@ def start_f():
                 if isinstance(clients, Credit):
                     for c in db_dc:
                         if c['client_id'] == clients.client_id():
+                            bank_clients.remove(clients)
+                            check.remove(c['client_id'])
                             db_dc.remove(c)  # удаляем его из списка
+                            for i in range(len(db_dc)):
+                                if c['client_id'] in db_dc[i].values():
+                                    del db_dc[i]
+                                    break
                             update_file(db_dc, db_dd)
                             print('Client '+str(clients.client_id())+' close his credit')
                 elif isinstance(clients, Deposit):
                     for d in db_dd:
                         if d['client_id'] == clients.client_id():
+                            bank_clients.remove(clients)
+                            check.remove(d['client_id'])
                             db_dd.remove(d)
                             update_file(db_dc, db_dd)
                             print('Client '+str(clients.client_id())+' close his deposit')
