@@ -166,7 +166,6 @@ app = Flask(__name__)
 
 @app.route("/api/v1/credits/<int:client_id>", methods=["GET"])
 def f_credits_id(client_id):
-    db_dc, db_dd, bank_clients, check = data_read()
     response = make_response({"status": "error", "message": f"Client {client_id} does not have active credits"})
     for accounts in bank_clients:
         if isinstance(accounts, Credit):
@@ -178,7 +177,6 @@ def f_credits_id(client_id):
 
 @app.route("/api/v1/deposits/<int:client_id>", methods=["GET"])
 def f_deposits_id(client_id):
-    db_dc, db_dd, bank_clients, check = data_read()
     response = make_response({"status": "error", "message": f"Client {client_id} does not have active deposits"})
     for accounts in bank_clients:
         if isinstance(accounts, Deposit):
@@ -190,7 +188,6 @@ def f_deposits_id(client_id):
 
 @app.route("/api/v1/deposits", methods=["GET"])
 def f_deposits():
-    db_dc, db_dd, bank_clients, check = data_read()
     show = []
     for accounts in bank_clients:
         if isinstance(accounts, Deposit):
@@ -201,20 +198,19 @@ def f_deposits():
 
 @app.route("/api/v1/credits", methods=["PUT"])
 def create_account_c():
-    db_dc, db_dd, bank_clients, check = data_read()
     account = request.json
     op_account = account
     response = make_response({"status": "error", "message": f"Credit for client {account['client_id']} already exists"})
     response.status = 400
     if account['client_id'] not in check:
         check.append(account['client_id'])
-        # op_account = Credit(**account)
-        # db_dc.append(op_account.filed())
-        # bank_clients.append(op_account)
-        # update_file(db_dc, db_dd)
-        db_dc.append(op_account)
-        # with open('./data/credits_deposits.yaml', 'w') as f:
-        #     yaml.dump(op_account, f)
+        op_account = Credit(**account)
+        db_dc.append(op_account.filed())
+        bank_clients.append(op_account)
+        update_file(db_dc, db_dd)
+        db_dc.append(op_account.filed())
+        with open('./data/credits_deposits.yaml', 'w') as f:
+            yaml.dump(op_account.filed(), f)
         update_file(db_dc, db_dd)
         response = make_response({"status": "ok", "message": f"Account for {account['client_id']} created"})
         response.status = 201
@@ -223,7 +219,6 @@ def create_account_c():
 
 @app.route("/api/v1/deposits", methods=["PUT"])
 def create_account_d():
-    db_dc, db_dd, bank_clients, check = data_read()
     account = request.json
     op_account = account
     response = make_response({"status": "error",
@@ -231,12 +226,12 @@ def create_account_d():
     response.status = 400
     if account['client_id'] not in check:
         check.append(account['client_id'])
-        # op_account = Deposit(**account)
-        # db_dd.append(op_account.filed())
-        # bank_clients.append(op_account)
-        # update_file(db_dc, db_dd)
+        op_account = Deposit(**account)
+        db_dd.append(op_account.filed())
+        bank_clients.append(op_account)
+        update_file(db_dc, db_dd)
         with open('./data/credits_deposits.yaml', 'w') as f:
-            yaml.dump(op_account, f)
+            yaml.dump(op_account.filed(), f)
         response = make_response({"status": "ok", "message": f"Account for {account['client_id']} created"})
         response.status = 201
     return response
@@ -244,7 +239,6 @@ def create_account_d():
 
 @app.route("/api/v1/credits", methods=["GET"])
 def f_credits():
-    db_dc, db_dd, bank_clients, check = data_read()
     show = []
     for accounts in bank_clients:
         if isinstance(accounts, Credit):
@@ -254,7 +248,6 @@ def f_credits():
 
 
 def start_f():
-    db_dc, db_dd, bank_clients, check = data_read()
     while True:
         # if os.path.exists('./data/buffer.yaml'):
         #     with open('./data/buffer.yaml', 'r') as open_db:
@@ -270,7 +263,7 @@ def start_f():
         #         db_dd.append(db_nu.filed())
         #     bank_clients.append(db_nu)
         #     os.remove('./data/buffer.yaml')
-        # time.sleep(1)  # МЕСЯЦ = 1 секунда
+        time.sleep(1)  # МЕСЯЦ = 1 секунда
         for clients in bank_clients:  # Каждый месяц вызываем у этих объектов метод process
             clients.process()
             if clients.closed():  # Если кредит, депозит закрыт
@@ -288,6 +281,7 @@ def start_f():
                             print('Client '+str(clients.client_id())+' close his deposit')
 
 
+db_dc, db_dd, bank_clients, check = data_read()
 start = Thread(target=start_f)
 start.start()
 if __name__ == '__main__':
