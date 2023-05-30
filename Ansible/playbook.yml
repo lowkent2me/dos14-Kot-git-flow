@@ -1,1 +1,13 @@
-- hosts:
+---
+- name: Test ping
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: sh apt update
+      apt: update_cache=true
+
+    - name: sh apt install ansible
+      ansible.builtin.apt:
+        name: ansible
+        state: latest

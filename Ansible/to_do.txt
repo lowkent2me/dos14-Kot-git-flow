@@ -1,0 +1,5 @@
+install ansible
+apt update = apt update_cache
+apt install ansible =
+mkdir ansible -check
+create user bank
