@@ -2,12 +2,27 @@
 - name: Test ping
   hosts: all
   become: yes
+  vars:
+    password: 3a843421048b1fade75d262f85a7fb4370a06a95ee81d763f9be01bc030054355973c2e41db70015b55fee74a217b50b3a8feb3789bd686f33125b0bf146d23b
 
   tasks:
     - name: sh apt update
       apt: update_cache=true
 
     - name: sh apt install ansible
-      ansible.builtin.apt:
+      apt:
         name: ansible
         state: latest
+
+    - name: create directory Ansible in home directory
+      file:
+        path: /home/ops/ansible
+        state: directory
+
+    - name: create user bank
+      user:
+        name: bank
+        password: "{{ password | password_hash('sha512') }}"
+        shell: /bin/bash
+
+# Password (encrypted with sha512): bank

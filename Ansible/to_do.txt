@@ -1,5 +1,7 @@
 install ansible
 apt update = apt update_cache
-apt install ansible =
+apt install ansible = apt name=ansible state=latest
 mkdir ansible -check
+ - ansible test -m file -a 'path=/home/ops/ansible state=directory' -b
 create user bank
+ - sudo useradd
