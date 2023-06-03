@@ -1,28 +1,28 @@
 ---
-- name: Test ping
+- name: installing my app
   hosts: all
   become: yes
   vars:
-    password: 3a843421048b1fade75d262f85a7fb4370a06a95ee81d763f9be01bc030054355973c2e41db70015b55fee74a217b50b3a8feb3789bd686f33125b0bf146d23b
 
   tasks:
-    - name: sh apt update
-      apt: update_cache=true
-
-    - name: sh apt install ansible
-      apt:
-        name: ansible
-        state: latest
-
-    - name: create directory Ansible in home directory
-      file:
-        path: /home/ops/ansible
-        state: directory
-
     - name: create user bank
       user:
         name: bank
-        password: "{{ password | password_hash('sha512') }}"
+        group: sudo
+        state: present
+        password: "{{ 'bank' |  password_hash('sha512', 'withsomesalt') }}"
         shell: /bin/bash
 
-# Password (encrypted with sha512): bank
+    - name: install git
+      apt:
+        name: git
+        state: latest
+        update_cache: yes
+
+    - name: install python v3.11
+      apt:
+        name: python3.11
+        state: latest
+      shell: sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
+             sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 2
+
