@@ -1,8 +1,3 @@
-
-Установить python 3.11
-
-Установить poetry
-Склонить репозиторий
 poetry install
 poetry run flask —app main.py run (systemd service)
 start systemd service

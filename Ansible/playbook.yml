@@ -23,6 +23,36 @@
       apt:
         name: python3.11
         state: latest
-      shell: sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
-             sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 2
 
+    - name: install pip
+      apt: name=python3-pip state=latest
+
+    - name: install poetry from pip
+      shell: pip install poetry
+
+    - name: create directory for repo
+      file:
+        path: /home/bank/project
+        state: directory
+
+    - name: add ssh directory
+      file:
+        path: /home/bank/.ssh
+        state: directory
+
+    - name: add key to user bank
+      copy:
+        src: keys/keys
+        dest: /home/bank/.ssh/
+        mode: 0400
+      tags: file
+
+    - name: clone repo
+      git:
+        repo: git@github.com:lowkent2me/dos14-Kot-git-flow.git
+        key_file: /home/bank/.ssh/keys
+        dest: /home/bank/project
+        version: master
+        single_branch: true
+        accept_hostkey: yes
+      tags: last
