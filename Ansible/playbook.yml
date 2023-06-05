@@ -19,6 +19,9 @@
         state: latest
         update_cache: yes
 
+    - name: add repository for latest python
+      shell: add-apt-repository ppa:deadsnakes/ppa -y
+
     - name: install python v3.11
       apt:
         name: python3.11
@@ -45,7 +48,6 @@
         src: keys/keys
         dest: /home/bank/.ssh/
         mode: 0400
-      tags: file
 
     - name: clone repo
       git:
@@ -55,4 +57,24 @@
         version: master
         single_branch: true
         accept_hostkey: yes
+
+    - name: install dependencies
+      shell: |
+        poetry install
+        poetry update --with dev
+      args:
+        chdir: /home/bank/project
+
+    - name: add systemd ini-file
+      copy:
+        src: unit/banktms.service
+        dest: /etc/systemd/system/
+      tags: copys
+
+    - name: start banktms service
+      systemd:
+        name: banktms
+        state: started
+      environment:
+        XDG_RUNTIME_DIR: "/etc/systemd/system/"
       tags: last

@@ -1,0 +1,11 @@
+[Unit]
+Description=Bank unit from TMS
+
+[Service]
+Type=forking
+WorkingDirectory=/home/bank/project
+ExecStart=/bin/bash -c "cd /home/bank/project && poetry run -- flask --app main run"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
