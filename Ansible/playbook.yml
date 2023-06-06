@@ -55,7 +55,7 @@
         key_file: /home/bank/.ssh/keys
         dest: /home/bank/project
         version: master
-#        single_branch: true
+        force: yes
         accept_hostkey: yes
 
     - name: install dependencies
