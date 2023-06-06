@@ -55,7 +55,7 @@
         key_file: /home/bank/.ssh/keys
         dest: /home/bank/project
         version: master
-        single_branch: true
+#        single_branch: true
         accept_hostkey: yes
 
     - name: install dependencies
@@ -75,6 +75,7 @@
       systemd:
         name: banktms
         state: started
+        daemon-reload: true
       environment:
         XDG_RUNTIME_DIR: "/etc/systemd/system/"
       tags: last
