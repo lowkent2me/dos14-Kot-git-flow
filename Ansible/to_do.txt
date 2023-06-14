@@ -1,2 +1,0 @@
-poetry run flask —app main.py run (systemd service)
-start systemd service
