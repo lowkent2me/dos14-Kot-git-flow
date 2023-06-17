@@ -1,4 +1,0 @@
----
-ansible_host                  :   192.168.8.131
-ansible_user                  :   ops
-ansible_ssh_private_key_file  :   /home/devops/.ssh/id_rsa

@@ -76,6 +76,3 @@
         name: banktms
         state: started
         daemon-reload: true
-      environment:
-        XDG_RUNTIME_DIR: "/etc/systemd/system/"
-      tags: last
