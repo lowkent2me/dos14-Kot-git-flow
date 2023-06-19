@@ -132,3 +132,20 @@ term-years ["1_1","2_2","3_2","4_6","5_8""6_20","7_9","8_11","9_13","10_12"]
 * В отдельном от flask потоке(thread) мы раз в месяц вызываем process кредитов и депозитов
   * сервис не должен хранить состояние (те быть stateless). Это значит, что при старте сервиса мы должны продолжить обрабатывать кредиты и депозиты с того момента где мы закончили
   ---
+
+# Lesson-20-22 (Ansible 1-3)
+Задеплоить ваше приложение (authn/authz/bank) на Ubuntu 22.04 c помощью ansible
+* установить ansible
+* mkdir ansible в репозитории
+* Создать пользователя authn/authz/bank
+* Установить git, 2.40.1
+* Установить python 3.11
+* Установить poetry
+* Склонить репозиторий
+* poetry install
+* poetry run flask —app main.py run (systemd service)
+* start systemd service
+---
+
+# Lesson-23 (Docker)
+Cделать с помощью Ansible  роль которая устанавливает Docker на Ubuntu 22.04
