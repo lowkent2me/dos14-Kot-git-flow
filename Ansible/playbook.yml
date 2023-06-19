@@ -76,3 +76,6 @@
         name: banktms
         state: started
         daemon-reload: true
+
+  roles:
+    - install_docker_engine

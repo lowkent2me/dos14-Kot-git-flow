@@ -1,3 +1,5 @@
 .idea
 __pycache__
 /Ansible/group_vars/
+/main_old.py
+/data(lesson17)

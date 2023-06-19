@@ -1,0 +1,15 @@
+
+  networks:
+      mynetwork:
+          name:
+            bank-network
+
+  services:
+      bank:
+        image: lowkent2me/mybank:v0.1.0
+        build: .
+        networks:
+            - bank-network
+        ports:
+            - 80:5000
+        restart: on-failure
