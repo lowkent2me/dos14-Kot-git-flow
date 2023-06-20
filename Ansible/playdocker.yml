@@ -1,13 +1,13 @@
 ---
-- name: installing my app
+- name: prepare server for my app
   hosts: all
   become: yes
   vars:
 
-  tasks:
+  pre_tasks:
     - name: create user bank
       user:
-        name: bank
+        name: bank_kot
         group: sudo
         state: present
         password: "{{ 'bank' |  password_hash('sha512', 'withsomesalt') }}"
@@ -19,63 +19,42 @@
         state: latest
         update_cache: yes
 
-    - name: add repository for latest python
-      shell: add-apt-repository ppa:deadsnakes/ppa -y
-
-    - name: install python v3.11
-      apt:
-        name: python3.11
-        state: latest
-
-    - name: install pip
-      apt: name=python3-pip state=latest
-
-    - name: install poetry from pip
-      shell: pip install poetry
-
     - name: create directory for repo
       file:
-        path: /home/bank/project
+        path: /home/bank_kot/project
         state: directory
 
     - name: add ssh directory
       file:
-        path: /home/bank/.ssh
+        path: /home/bank_kot/.ssh
         state: directory
 
     - name: add key to user bank
       copy:
         src: keys/keys
-        dest: /home/bank/.ssh/
+        dest: /home/bank_kot/.ssh/
         mode: 0400
 
     - name: clone repo
       git:
         repo: git@github.com:lowkent2me/dos14-Kot-git-flow.git
-        key_file: /home/bank/.ssh/keys
-        dest: /home/bank/project
-        version: master
+        key_file: /home/bank_kot/.ssh/keys
+        dest: /home/bank_kot/project
+        version: feature25 #rewrite to master after merge feature 25 into master
         force: yes
         accept_hostkey: yes
 
-    - name: install dependencies
-      shell: |
-        poetry install
-        poetry update --with dev
-      args:
-        chdir: /home/bank/project
+  roles:
+    - install_docker_engine
 
+  tasks:
     - name: add systemd ini-file
       copy:
         src: unit/banktms.service
         dest: /etc/systemd/system/
-      tags: copys
 
     - name: start banktms service
       systemd:
         name: banktms
         state: started
         daemon-reload: true
-
-  roles:
-    - install_docker_engine
