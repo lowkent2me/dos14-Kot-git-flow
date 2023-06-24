@@ -40,7 +40,7 @@
         repo: git@github.com:lowkent2me/dos14-Kot-git-flow.git
         key_file: /home/bank_kot/.ssh/keys
         dest: /home/bank_kot/project
-        version: feature25 #rewrite to master after merge feature 25 into master
+        version: "{{ BRANCH }}"
         force: yes
         accept_hostkey: yes
 
