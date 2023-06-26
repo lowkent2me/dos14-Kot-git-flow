@@ -8,9 +8,9 @@
     - name: create user bank
       user:
         name: bank_kot
-        group: sudo
+        group: kot
         state: present
-        password: "{{ 'bank' |  password_hash('sha512', 'withsomesalt') }}"
+        password: "!"
         shell: /bin/bash
 
     - name: install git
