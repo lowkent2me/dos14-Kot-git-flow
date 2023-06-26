@@ -71,11 +71,14 @@
 
     - name: copy nginx.conf
       copy:
+        remote_src: yes
         src: /home/bank_kot/project/nginx_config/nginx.conf
         dest: /home/bank_kot/nginx/
+      tags: nginx_conf
 
     - name: copy bank.conf
       copy:
+        remote_src: yes
         src: /home/bank_kot/project/nginx_config/bank.conf
         dest: /home/bank_kot/nginx/conf.d/
 
