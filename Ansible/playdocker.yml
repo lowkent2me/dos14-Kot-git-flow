@@ -59,6 +59,7 @@
         state: directory
       with_items:
         - /home/bank_kot/nginx
+        - /home/bank_kot/nginx/conf.d
         - /home/bank_kot/nginx/logs
         - /home/bank_kot/nginx/crt
         - /home/bank_kot/nginx/sites_enabled
@@ -67,6 +68,11 @@
       copy:
         src: /home/bank/project/nginx_config/nginx.conf
         dest: /home/bank_kot/nginx/
+
+    - name: copy bank.conf
+      copy:
+        src: /home/bank/project/nginx_config/bank.conf
+        dest: /home/bank_kot/nginx/conf.d/
 
     - name: start banktms service
       systemd:
