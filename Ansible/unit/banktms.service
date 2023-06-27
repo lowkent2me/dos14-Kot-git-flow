@@ -3,8 +3,9 @@ Description=Bank unit from TMS
 
 [Service]
 Type=forking
-WorkingDirectory=/home/bank/project
-ExecStart=/usr/local/bin/poetry run -- python /home/bank/project/main.py
+WorkingDirectory=/home/bank_kot/project
+ExecStart=/bin/bash -c 'sudo docker compose up'
+ExecStop=/bin/bash -c 'sudo docker compose down'
 Restart=always
 Type=simple
 

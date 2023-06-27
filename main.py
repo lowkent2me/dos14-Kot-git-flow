@@ -278,6 +278,6 @@ db_dc, db_dd, bank_clients, check = data_read()
 start = Thread(target=start_f)
 start.start()
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=False, host='0.0.0.0')
 # curl -X PUT -H "Content-type: application/json" -d '{"client_id": 15, "percent": 10,
 # "a_sum": 1000, "term": 1}' localhost:5000/api/v1/credits

@@ -1,0 +1,8 @@
+
+  services:
+      bank:
+        image: lowkent2me/mybank:v0.1.1
+        build: .
+        ports:
+            - 5000:5000
+        restart: on-failure

@@ -7,7 +7,7 @@
   tasks:
     - name: create user bank
       user:
-        name: bank
+        name: bank_kot
         group: sudo
         state: present
         password: "{{ 'bank' |  password_hash('sha512', 'withsomesalt') }}"
@@ -54,7 +54,7 @@
         repo: git@github.com:lowkent2me/dos14-Kot-git-flow.git
         key_file: /home/bank/.ssh/keys
         dest: /home/bank/project
-        version: master
+        version: feature25
         force: yes
         accept_hostkey: yes
 
@@ -76,3 +76,6 @@
         name: banktms
         state: started
         daemon-reload: true
+
+  roles:
+    - install_docker_engine
