@@ -5,6 +5,11 @@
   vars:
 
   pre_tasks:
+    - name: Add group "kot"
+      ansible.builtin.group:
+        name: kot
+        state: present
+        
     - name: create user bank
       user:
         name: bank_kot
