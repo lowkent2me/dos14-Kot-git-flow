@@ -27,11 +27,11 @@
         container_name: bank-nginx
         hostname: nginx-bank
         volumes:
-            - /home/bank_kot/nginx/logs:/var/log/nginx #logs.
-            - /home/bank_kot/nginx/conf.d/bank.conf:/etc/nginx/conf.d/bank.conf:ro #config app
-            - /home/bank_kot/nginx/nginx.conf:/etc/nginx/nginx.conf:ro #config nginx.
-            - /home/bank_kot/nginx/sites-enabled:/etc/nginx/sites-enabled:ro #sites.
-            - /home/bank_kot/nginx/crt:/etc/nginx/ssl:ro #certificates
+            - ./nginx/logs:/var/log/nginx #logs.
+            - ./nginx/conf.d/bank.conf:/etc/nginx/conf.d/bank.conf:ro #config app
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro #config nginx.
+            - ./nginx/sites-enabled:/etc/nginx/sites-enabled:ro #sites.
+            - ./nginx/crt:/etc/nginx/ssl:ro #certificates
 
         networks:
             app_net:
