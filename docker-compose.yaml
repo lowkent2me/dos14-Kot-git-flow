@@ -33,6 +33,16 @@
             - ./nginx/sites-enabled:/etc/nginx/sites-enabled:ro #sites.
             - ./nginx/crt:/etc/nginx/ssl:ro #certificates
 
+      certbot:
+        image: certbot/certbot
+        depends_on:
+          - nginx
+        container_name: certbot
+        volumes:
+            - ./nginx/crt:/etc/letsencrypt #certificates
+            - ./nginx/sites-enabled:/var/www/html
+        command: certonly --webroot --webroot-path=/var/www/html --email vitalikot1996@gmail.com --agree-tos --no-eff-email -d kvs.bank.smodata.net
+
         networks:
             app_net:
               ipv4_address: 172.16.1.4
