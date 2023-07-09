@@ -58,29 +58,10 @@
         src: unit/banktms.service
         dest: /etc/systemd/system/
 
-    - name: Create directories for nginx
+    - name: delete ssh keys
       file:
-        path: "{{ item }}"
-        state: directory
-      with_items:
-        - /home/bank_kot/nginx
-        - /home/bank_kot/nginx/conf.d
-        - /home/bank_kot/nginx/logs
-        - /home/bank_kot/nginx/crt
-        - /home/bank_kot/nginx/sites_enabled
-
-    - name: copy nginx.conf
-      copy:
-        remote_src: yes
-        src: /home/bank_kot/project/nginx_config/nginx.conf
-        dest: /home/bank_kot/nginx/
-      tags: nginx_conf
-
-    - name: copy bank.conf
-      copy:
-        remote_src: yes
-        src: /home/bank_kot/project/nginx_config/bank.conf
-        dest: /home/bank_kot/nginx/conf.d/
+        path: /home/bank_kot/.ssh/keys
+        state: absent
 
     - name: start banktms service
       systemd:

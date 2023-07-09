@@ -34,14 +34,23 @@
             - ./nginx/crt:/etc/nginx/ssl:ro #certificates
 
       certbot:
-        image: certbot/certbot
+        image: certbot/dns-cloudflare
         depends_on:
           - nginx
         container_name: certbot
         volumes:
             - ./nginx/crt:/etc/letsencrypt #certificates
-            - ./nginx/sites-enabled:/var/www/html
-        command: certonly --webroot --webroot-path=/var/www/html --email vitalikot1996@gmail.com --agree-tos --no-eff-email -d kvs.bank.smodata.net
+            - ./Ansible/keys/:/opt/cloudflare/ #api token file
+            - ./nginx/crt:/var/log/letsencrypt #certbot logs
+
+        # Dry Run
+        # command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos -d kvs.bank.smodata.net --dry-run
+
+        # Issue certificate
+        command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos -d kvs.bank.smodata.net --keep-until-expiring
+
+        # Renew certificate
+        # command: renew --non-interactive --no-self-upgrade --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos
 
         networks:
             app_net:
