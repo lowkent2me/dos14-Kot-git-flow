@@ -41,6 +41,7 @@
         volumes:
             - ./nginx/crt:/etc/letsencrypt #certificates
             - ./Ansible/keys/:/opt/cloudflare/ #api token file
+            - ./Ansible/keys/:/etc/letsencrypt/accounts/acme-v02.api.letsencrypt.org/directory/ #account
             - ./nginx/crt:/var/log/letsencrypt #certbot logs
 
         # Dry Run
