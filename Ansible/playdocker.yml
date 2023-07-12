@@ -61,7 +61,7 @@
     - name: touch secretfile
       file:
         path: /home/bank_kot/project/Ansible/keys/credentials
-        state: present
+        state: file
 
     - name: delete ssh keys
       file:
