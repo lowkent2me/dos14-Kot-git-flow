@@ -39,10 +39,10 @@
           - nginx
         container_name: certbot
         volumes:
-            - ./nginx/crt:/etc/letsencrypt #certificates
+            - ./nginx/crt/letsencrypt:/etc/letsencrypt #certificates
             - ./Ansible/keys/:/opt/cloudflare/ #api token file
             - ./Ansible/keys/:/etc/letsencrypt/accounts/acme-v02.api.letsencrypt.org/directory/ #account
-            - ./nginx/crt:/var/log/letsencrypt #certbot logs
+            - ./nginx/crt/certbot_logs:/var/log/letsencrypt #certbot logs
 
         # Dry Run
         # command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos -d kvs.bank.smodata.net --dry-run
