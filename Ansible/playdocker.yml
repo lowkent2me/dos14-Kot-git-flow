@@ -58,6 +58,11 @@
         src: unit/banktms.service
         dest: /etc/systemd/system/
 
+    - name: touch secretfile
+      file:
+        path: /home/bank_kot/project/Ansible/keys/credentials
+        state: present
+
     - name: delete ssh keys
       file:
         path: /home/bank_kot/.ssh/keys
