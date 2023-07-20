@@ -50,10 +50,10 @@
             - ./nginx/crt/certbot_logs:/var/log/letsencrypt #certbot logs
 
         # Dry Run
-        # command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos -d kvs.bank.smodata.net --dry-run
+        # command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos -d kvs1.bank.smodata.net --dry-run
 
         # Issue certificate
-        command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos -d kvs.bank.smodata.net --keep-until-expiring
+        command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos -d kvs1.bank.smodata.net --keep-until-expiring
 
         # Renew certificate
         # command: renew --non-interactive --no-self-upgrade --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos
