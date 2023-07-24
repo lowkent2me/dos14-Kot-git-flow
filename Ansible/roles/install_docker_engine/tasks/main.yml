@@ -1,48 +1,56 @@
----
-# tasks file for install_docker_engine
-
-- name: removing old docker engine
+- name: install dependencies
+  become: true
   apt:
-    name: "{{ item }}"
-    state: absent
-    purge: yes
-  with_items:
-    - docker
-    - docker-engine
-    - docker.io
-    - containerd
-    - runc
-
-- name: install packages for https repo
-  apt:
-    name: "{{ item }}"
+    name: "{{item}}"
     state: present
-    update_cache: true
-  with_items:
+    update_cache: yes
+  loop:
     - ca-certificates
     - curl
-    - gnupg
+    - gnupg-agent
 
-- name: add gpg keys
-  shell: |
-    sudo install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    sudo chmod a+r /etc/apt/keyrings/docker.gpg
+- name: Set up Docker apt keyrings
+  become: true
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
 
-- name: add docker repo
-  shell: |
-    if [ -f /etc/apt/keyrings/docker.gpg ]; then \
-    exit 0;\
-    else echo \
-    "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-    "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null; fi
+- name: Download Docker GPG key
+  become: true
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+    keyring: /etc/apt/keyrings/docker.gpg
 
-- name: install docker
+- name: Set permissions for Docker GPG key
+  become: true
+  file:
+    path: /etc/apt/keyrings/docker.gpg
+    mode: '0644'
+
+- name: Add Docker apt repository
+  become: true
+  apt_repository:
+    update_cache: yes
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu bionic stable"
+    state: present
+
+- name: Install Docker packages
+  become: true
   apt:
-    name: "{{ item }}"
-    update_cache: true
-  with_items:
-    - docker-ce
-    - docker-ce-cli
-    - docker-compose-plugin
+    update_cache: yes
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+      - docker-buildx-plugin
+    state: present
+
+- name: Add user to Docker group
+  become: true
+  user:
+    name: bank_kot
+    groups: docker
+    append: yes
