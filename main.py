@@ -246,6 +246,13 @@ def f_credits():
     return x
 
 
+@app.route("/api/v1/bank/health_check", methods=["GET"])
+def health_check():
+    response = make_response({"status": "ok", "message": "Service Bank is available"})
+    response.status = 200
+    return response
+
+
 def start_f():
     while True:
         time.sleep(1)  # МЕСЯЦ = 1 секунда
