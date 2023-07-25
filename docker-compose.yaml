@@ -1,0 +1,70 @@
+
+  services:
+      bank:
+        image: lowkent2me/bank:latest
+        build:
+          context: .
+          dockerfile: ./Dockerfile
+        ports:
+            - 5000:5000
+        restart: on-failure
+        container_name: app-bank
+        hostname: app-bank
+        networks:
+          app_net:
+            ipv4_address: 172.16.1.5
+
+      nginx:
+        image: nginx:stable
+        build:
+          context: .
+          dockerfile: ./Dockerfile_web
+        ports:
+          - 80:80
+          - 443:443
+        depends_on:
+          - bank
+        restart: on-failure
+        container_name: bank-nginx
+        hostname: nginx-bank
+        volumes:
+            - ./nginx/logs:/var/log/nginx #logs.
+            - ./nginx/conf.d/bank_ssl.conf:/etc/nginx/conf.d/bank_ssl.conf:ro #config app
+            - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro #ignore default config
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro #config nginx.
+            - ./nginx/sites-enabled:/etc/nginx/sites-enabled:ro #sites.
+            - ./nginx/crt:/etc/nginx/ssl:ro #certificates
+        networks:
+          app_net:
+            ipv4_address: 172.16.1.6
+
+      certbot:
+        image: certbot/dns-cloudflare
+        depends_on:
+          - nginx
+        container_name: certbot
+        volumes:
+            - ./nginx/crt/letsencrypt:/etc/letsencrypt #certificates
+            - ./Ansible/keys/:/opt/cloudflare/ #api token file
+            - ./Ansible/keys/:/etc/letsencrypt/accounts/acme-v02.api.letsencrypt.org/directory/ #account
+            - ./nginx/crt/certbot_logs:/var/log/letsencrypt #certbot logs
+
+        # Dry Run
+        # command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos -d kvs.bank.smodata.net --dry-run
+
+        # Issue certificate
+        command: certonly --non-interactive --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos -d kvs.bank.smodata.net --keep-until-expiring
+
+        # Renew certificate
+        # command: renew --non-interactive --no-self-upgrade --dns-cloudflare --dns-cloudflare-credentials /opt/cloudflare/credentials --agree-tos
+
+        networks:
+            app_net:
+              ipv4_address: 172.16.1.4
+
+  networks:
+    app_net:
+      driver: bridge
+      ipam:
+        config:
+          - subnet: 172.16.1.0/24
