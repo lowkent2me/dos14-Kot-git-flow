@@ -72,6 +72,12 @@
         path: /home/bank_kot/.ssh/keys
         state: absent
 
+    - name: decrypt db_password
+      copy:
+        src: keys/db_password
+        dest: /home/bank_kot/project/Ansible/keys/db_password
+        mode: 0400
+
     - name: start banktms service
       systemd:
         name: banktms

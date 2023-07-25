@@ -7,6 +7,8 @@
           dockerfile: ./Dockerfile
         ports:
             - 5000:5000
+        depends_on:
+            - db
         restart: on-failure
         container_name: app-bank
         hostname: app-bank
@@ -37,6 +39,21 @@
         networks:
           app_net:
             ipv4_address: 172.16.1.6
+
+      db:
+        image: postgres:14-bullseye
+        ports:
+          - 5432:5432
+        restart: always
+        container_name: db-bank
+        hostname: db-bank
+        volumes:
+          - ./bank.data:/var/lib/postgresql/data
+        environment:
+          PGDATA: /var/lib/postgresql/data/pgdata
+          POSTGRES_USER: bank_kot
+          POSTGRES_DB: kot
+          POSTGRES_PASSWORD_FILE: ./Ansible/keys/db_password
 
       certbot:
         image: certbot/dns-cloudflare
