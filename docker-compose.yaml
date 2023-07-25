@@ -49,11 +49,15 @@
         hostname: db-bank
         volumes:
           - ./bank.data:/var/lib/postgresql/data
+          - ./Ansible/keys/db_password:/var/lib/postgresql/db_password:ro
         environment:
           PGDATA: /var/lib/postgresql/data/pgdata
           POSTGRES_USER: bank_kot
           POSTGRES_DB: kot
-          POSTGRES_PASSWORD_FILE: ./Ansible/keys/db_password
+          POSTGRES_PASSWORD_FILE: /var/lib/postgresql/db_password
+        networks:
+          app_net:
+            ipv4_address: 172.16.1.7
 
       certbot:
         image: certbot/dns-cloudflare
