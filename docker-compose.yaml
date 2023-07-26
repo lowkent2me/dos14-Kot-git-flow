@@ -44,7 +44,6 @@
         image: postgres:14-bullseye
         ports:
           - 5432:5432
-        restart: always
         container_name: db-bank
         hostname: db-bank
         volumes:
@@ -55,6 +54,12 @@
           POSTGRES_USER: bank_kot
           POSTGRES_DB: kot
           POSTGRES_PASSWORD_FILE: /var/lib/postgresql/db_password
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U postgres"]
+          interval: 300s
+          timeout: 5s
+          retries: 5
+        restart: on-failure
         networks:
           app_net:
             ipv4_address: 172.16.1.7
