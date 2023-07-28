@@ -1,7 +1,2 @@
-.idea
-__pycache__
-/Ansible/group_vars/
-/Ansible/playserver.yml
-nginx/crt
-nginx/logs
-nginx/sites-enabled
+.env
+*__pycache*
