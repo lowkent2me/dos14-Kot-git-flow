@@ -28,8 +28,8 @@
         hostname: nginx-bank
         volumes:
             - ./nginx/logs:/var/log/nginx #logs.
-            - ./nginx/conf.d/bank.conf:/etc/nginx/conf.d/bank.conf:ro #config app
-            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro #config nginx.
+            - ./nginx_config/bank.conf:/etc/nginx/conf.d/bank.conf:ro #config app
+            - ./nginx_config/nginx.conf:/etc/nginx/nginx.conf:ro #config nginx.
             - ./nginx/sites-enabled:/etc/nginx/sites-enabled:ro #sites.
             - ./nginx/crt:/etc/nginx/ssl:ro #certificates
 
