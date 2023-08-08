@@ -1,0 +1,92 @@
+---
+- name: prepare server for my app
+  hosts: all
+  become: yes
+  vars:
+
+  pre_tasks:
+    - name: Add group "kot"
+      ansible.builtin.group:
+        name: kot
+        state: present
+
+    - name: create user bank
+      user:
+        name: bank_kot
+        group: kot
+        state: present
+        password: "!"
+        shell: /bin/bash
+
+    - name: install git
+      apt:
+        name: git
+        state: latest
+        update_cache: yes
+
+    - name: create directory for repo
+      file:
+        path: /home/bank_kot/project
+        state: directory
+
+    - name: add ssh directory
+      file:
+        path: /home/bank_kot/.ssh
+        state: directory
+
+    - name: add key to user bank
+      copy:
+        src: keys/keys
+        dest: /home/bank_kot/.ssh/
+        mode: 0400
+
+
+  roles:
+    - install_docker_engine
+
+  tasks:
+    - name: clone repo
+      git:
+        repo: git@github.com:lowkent2me/dos14-Kot-git-flow.git
+        key_file: /home/bank_kot/.ssh/keys
+        dest: /home/bank_kot/project
+        version: "{{ BRANCH }}"
+        force: yes
+        accept_hostkey: yes
+      notify:
+        - restart bank
+
+    - name: add systemd ini-file
+      copy:
+        src: unit/banktms-https.service
+        dest: /etc/systemd/system/
+
+    - name: touch secretfile
+      copy:
+        src: keys/credentials
+        dest: /home/bank_kot/project/Ansible/keys/credentials
+        mode: 0400
+
+    - name: delete ssh keys
+      file:
+        path: /home/bank_kot/.ssh/keys
+        state: absent
+
+    - name: decrypt db_password
+      copy:
+        src: keys/db_password
+        dest: /home/bank_kot/project/Ansible/keys/db_password
+        mode: 0400
+
+    - name: start banktms service
+      systemd:
+        name: banktms-https
+        state: started
+        daemon-reload: true
+
+  handlers:
+    - name: restart bank
+      systemd:
+        name: banktms-https
+        state: restarted
+        daemon-reload: true

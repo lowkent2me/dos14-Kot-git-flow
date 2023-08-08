@@ -4,7 +4,7 @@ Description=Bank unit from TMS
 [Service]
 Type=forking
 WorkingDirectory=/home/bank_kot/project
-ExecStart=/bin/bash -c 'sudo docker compose --profile http up'
+ExecStart=/bin/bash -c 'sudo docker compose --profile https up'
 ExecStop=/bin/bash -c 'sudo docker compose down'
 Restart=always
 Type=simple
