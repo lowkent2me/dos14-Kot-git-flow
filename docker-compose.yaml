@@ -93,7 +93,7 @@
       certbot:
         image: certbot/dns-cloudflare
         depends_on:
-          - nginx
+          - nginx-https
         container_name: certbot
         volumes:
             - ./nginx/crt/letsencrypt:/etc/letsencrypt #certificates
