@@ -4,4 +4,3 @@ __pycache__
 nginx/crt
 nginx/logs
 nginx/sites-enabled
-pg_hba.conf
