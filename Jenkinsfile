@@ -21,16 +21,16 @@ pipeline {
         }
       }
       stage('Build') {
-        when {
-          anyOf {
-            branch pattern: "master"
-          }
+      when {
+        anyOf {
+          branch pattern: "master"
         }
-        steps {
-          script {
-            def image = docker.build "lowkent2me/bank:${env.GIT_COMMIT}"
-            docker.withRegistry('','dockerhub-lowkent2me') {
-              image.push()
+      }
+      steps {
+        script {
+          def image = docker.build "lowkent2me/bank:${env.GIT_COMMIT}"
+          docker.withRegistry('','dockerhub-kvs') {
+            image.push()
           }
         }
       }
