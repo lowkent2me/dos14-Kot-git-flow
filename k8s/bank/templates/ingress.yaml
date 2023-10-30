@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-bank
+  name: ingress-{{ include "bank.name" . }}
   namespace: {{ .Release.Namespace }}
   annotations:
     nginx.ingress.kubernetes.io/use-regex: "true"

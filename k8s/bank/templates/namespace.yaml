@@ -3,4 +3,4 @@ kind: Namespace
 metadata:
   name: omegabank
   labels:
-    bank: omegabank
+    {{ .Values.labels }}

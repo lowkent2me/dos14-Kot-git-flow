@@ -1,8 +1,8 @@
-# Default values for bank.
+# Default values for test.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 2
+replicaCount: 1
 
 image:
   repository: nginx
@@ -42,8 +42,6 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 80
-  protocol: TCP
-  targetport: 80
 
 ingress:
   enabled: false
@@ -98,24 +96,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-deployment:
-  strategy:
-    type: RollingUpdate
-    maxSurge: 2
-  template:
-    metadata:
-    spec:
-      containers:
-        nginx:
-          - name: nginx
-            image: nginx:1.25.2
-            ports:
-              - containerPort: 80
-                name: http
-                protocol: TCP
-
-labels:
-    app: bank
-    bank: omegabank
-    env: prd

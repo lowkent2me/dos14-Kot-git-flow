@@ -1,41 +1,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.name }}
+  name: {{ include "bank.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: bank
-    bank: omegabank
-    env: prd
+    {{ .Values.labels . | nindent 4 }}
 spec:
-  replicas: 2
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
-      app: bank
-      bank: omegabank
-      env: prd
+      {{ .Values.labels . | nindent 6 }}
   strategy:
-    type: RollingUpdate
+    type: {{ .Values.deployment.strategy.type }}
     rollingUpdate:
-      maxSurge: 2
+      maxSurge: {{ .Values.deployment.strategy.maxSurge }}
   template:
     metadata:
       labels:
-        app: bank
-        bank: omegabank
-        env: prd
+        {{ .Values.labels . | nindent 8 }}
     spec:
       containers:
-        - name: nginx
-          image: nginx:1.25.2
+        - name: {{ .Values.deployment.template.spec.containers.nginx.name }}
+          image: {{ .Values.deployment.template.spec.containers.nginx.image }}
           ports:
-            - containerPort: 80
-              name: http
-              protocol: TCP
+            - containerPort: {{ .Values.deployment.template.spec.containers.nginx.ports.containerPort }}
+              name: {{ .Values.deployment.template.spec.containers.nginx.ports.name }}
+              protocol: {{ .Values.deployment.template.spec.containers.nginx.ports.protocol }}
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx
-        - name: bank
+        - name: {{ include "test.fullname" . }}
           image: lowkent2me/bank:latest
       #        env:
       #        - name: PG_DATABASE
