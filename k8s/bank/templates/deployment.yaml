@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: bank
+    bank: omegabank
+    env: prd
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bank
+      bank: omegabank
+      env: prd
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+  template:
+    metadata:
+      labels:
+        app: bank
+        bank: omegabank
+        env: prd
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25.2
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx
+        - name: bank
+          image: lowkent2me/bank:latest
+      #        env:
+      #        - name: PG_DATABASE
+      #          value: bank
+      #        - name: PG_USER
+      #          valueFrom:
+      #            secretKeyRef:
+      #              key: username
+      #              name: omega-db-creds
+      #        - name: PG_PASSWORD
+      #          valueFrom:
+      #            secretKeyRef:
+      #              key: password
+      #              name: omega-db-creds
+      #        - name: PG_HOST
+      #          value: rds-omega-tf.c0whq4jiugzq.eu-north-1.rds.amazonaws.com
+      #        - name: PG_PORT
+      #          value: "5432"
+      volumes:
+        - configMap:
+            name: bank-nginx-config
+          name: nginx-config
