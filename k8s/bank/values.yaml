@@ -5,7 +5,7 @@
 replicaCount: 2
 
 image:
-  repository: lowkent2me
+  repository: lowkent2me/bank
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -23,7 +23,7 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: ""
+  name: bank-service-acc
 
 podAnnotations: {}
 podLabels: {}
@@ -50,7 +50,6 @@ ingress:
   annotations: {
       nginx.ingress.kubernetes.io/use-regex: "true",
       nginx.ingress.kubernetes.io/rewrite-target: /$1,
-      cert-manager.io/cluster-issuer: "letsencrypt-prod",
   }
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"

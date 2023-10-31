@@ -20,7 +20,3 @@ spec:
                 name: {{ include "bank.fullname" . }}-svc
                 port:
                   number: {{ .Values.ingress.hosts.http.port }}
-#  tls:
-#    - hosts:
-#        - omegabank.smodata.net
-#      secretName: omega-tls

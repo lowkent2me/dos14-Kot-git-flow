@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.name }}-nginx-config
+  name: {{ include "bank.name" . }}-nginx-config
   namespace: {{ .Release.Namespace }}
 data:
   nginx.conf: |-

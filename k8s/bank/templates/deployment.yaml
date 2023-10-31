@@ -4,14 +4,14 @@ metadata:
   name: {{ include "bank.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{ include "bank.labels" . | nindent 4 }}
+    {{- include "bank.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{ include "bank.labels" . | nindent 6 }}
+      {{- include "bank.labels" . | nindent 6 }}
   strategy:
     type: {{ .Values.deployment.strategy.type }}
     rollingUpdate:
@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       labels:
-        {{ include "bank.labels" . | nindent 8 }}
+        {{- include "bank.labels" . | nindent 8 }}
     spec:
       containers:
         - name: {{ .Values.deployment.template.specNginx.name }}
@@ -32,7 +32,7 @@ spec:
             - name: nginx-config
               mountPath: /etc/nginx
         - name: {{ include "bank.fullname" . }}
-          image: {{ .Values.image.repository }}/bank:{{ .Values.image.tag | default "latest" }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}
       #        env:
       #        - name: PG_DATABASE
       #          value: bank
@@ -52,5 +52,5 @@ spec:
       #          value: "5432"
       volumes:
         - configMap:
-            name: {{ .Values.name }}-nginx-config
+            name: {{ include "bank.name" . }}-nginx-config
           name: nginx-config
