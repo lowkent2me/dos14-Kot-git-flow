@@ -3,25 +3,24 @@ kind: Ingress
 metadata:
   name: ingress-{{ include "bank.name" . }}
   namespace: {{ .Release.Namespace }}
+  {{- with .Values.ingress.annotations }}
   annotations:
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    kubernetes.io/ingress.class: "nginx"
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
-  ingressClassName: nginx
+  ingressClassName: {{ .Values.ingress.className }}
   rules:
-    - host: omegabank.smodata.net
+    - host: {{ .Values.ingress.hosts.host }}
       http:
         paths:
-          - path: /bank(.*)
-            pathType: ImplementationSpecific
+          - path: {{ .Values.ingress.hosts.http.paths.path }}
+            pathType: {{ .Values.ingress.hosts.http.paths.pathType }}
             backend:
               service:
-                name: bank-svc
+                name: {{ include "bank.fullname" . }}-svc
                 port:
-                  number: 80
-  tls:
-    - hosts:
-        - omegabank.smodata.net
-      secretName: omega-tls
+                  number: {{ .Values.ingress.hosts.http.port }}
+#  tls:
+#    - hosts:
+#        - omegabank.smodata.net
+#      secretName: omega-tls

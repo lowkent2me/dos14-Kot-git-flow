@@ -9,4 +9,4 @@ spec:
       port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetport }}
   selector:
-    {{ .Values.labels . | nindent 4 }}
+    {{ include "bank.labels" . | nindent 4 }}
