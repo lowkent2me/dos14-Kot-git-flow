@@ -21,6 +21,7 @@ spec:
       labels:
         {{- include "bank.labels" . | nindent 8 }}
     spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       containers:
         - name: {{ .Values.deployment.template.specNginx.name }}
           image: {{ .Values.deployment.template.specNginx.image }}
