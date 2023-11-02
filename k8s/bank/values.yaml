@@ -50,11 +50,13 @@ ingress:
   annotations: {
       nginx.ingress.kubernetes.io/use-regex: "true",
       nginx.ingress.kubernetes.io/rewrite-target: /$1,
+#      nginx.ingress.kubernetes.io/upstream-vhost: "omegabank.smodata.net",
+      nginx.ingress.kubernetes.io/service-upstream: "true",
   }
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-      host: omegabank.smodata.net
+      host: api.omega.smodata.net
       http:
         paths:
             path: /bank(.*)
