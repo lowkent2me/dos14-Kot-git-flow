@@ -94,7 +94,9 @@ volumes: []
 #     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
+volumeMounts:
+  name: nginx-config
+  mountPath: /etc/nginx
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
