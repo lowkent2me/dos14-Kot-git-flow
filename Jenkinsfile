@@ -43,8 +43,10 @@ pipeline {
         }
       }
       steps {
-        sh 'sed -E 's/tag:.+$/tag: '"$GIT_COMMIT"'/g' k8s/bank/values.yaml'
-        sh "cat k8s/bank/values.yaml"
+        sh '''
+            sed -E 's/tag:.+$/tag: '"$GIT_COMMIT"'/g' k8s/bank/values.yaml
+            cat k8s/bank/values.yaml
+        '''
       }
     }
   }
