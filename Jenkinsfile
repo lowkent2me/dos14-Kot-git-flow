@@ -48,7 +48,7 @@ pipeline {
         def data = readYaml file: filename
 
         // Change something in the file
-        data.image.tag = ${env.GIT_COMMIT}
+        data.image.tag = "${env.GIT_COMMIT}"
 
         sh "rm $filename"
         writeYaml file: filename, data: data
