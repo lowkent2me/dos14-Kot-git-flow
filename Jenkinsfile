@@ -46,6 +46,8 @@ pipeline {
         sh '''
             sed -E 's/tag:.+$/tag: '"$GIT_COMMIT"'/g' k8s/bank/values.yaml
             cat k8s/bank/values.yaml
+            git add .
+            git commit -m "Hello from Jenkins"
         '''
       }
     }
