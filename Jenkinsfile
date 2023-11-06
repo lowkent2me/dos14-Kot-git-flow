@@ -39,10 +39,12 @@ pipeline {
       when {
         anyOf {
           branch pattern: "feature-CD"
+          branch pattern: "master"
         }
       }
       steps {
-        sh "echo $GIT_COMMIT"
+        sh "sed -E 's/tag:.+$/tag: '"$GIT_COMMIT"'/g' k8s/bank/values.yaml"
+        sh "cat k8s/bank/values.yaml"
       }
     }
   }
