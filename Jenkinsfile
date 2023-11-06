@@ -41,11 +41,8 @@ pipeline {
           branch pattern: "master"
         }
       }
-    }
       steps {
         sh "echo $GIT_COMMIT"
-      }
-        }
       }
     }
   }
