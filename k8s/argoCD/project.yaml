@@ -18,7 +18,7 @@ spec:
   # Destination clusters can be identified by 'server', 'name', or both.
   destinations:
     - namespace: omegabank
-#      server: https://kubernetes.default.svc
+      server: '*'
       name: '*'
 
   # Allow all cluster-scoped resources from being created

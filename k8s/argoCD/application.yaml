@@ -1,15 +1,26 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: bank
-  namespace: omegabank
+  name: omegabank-bank
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: omegabank
   source:
-    repoURL: https://github.com/lowkent2me/dos14-Kot-git-flow.git
-    targetRevision: master
+    repoURL: 'https://github.com/lowkent2me/dos14-Kot-git-flow.git'
     path: k8s/bank
-    chart: bank
+    targetRevision: feature-CD
+    helm:
+      valueFiles:
+        - /k8s/bank/values.yaml
+      releaseName: omegabank-bank
   destination:
-    server: https://kubernetes.default.svc
+    server: 'https://1D740396F34543A99F12858947ABAD69.gr7.eu-west-1.eks.amazonaws.com'
     namespace: omegabank
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
