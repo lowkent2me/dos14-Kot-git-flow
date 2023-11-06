@@ -15,7 +15,7 @@ spec:
         - /k8s/bank/values.yaml
       releaseName: omegabank-bank
   destination:
-    server: 'https://1D740396F34543A99F12858947ABAD69.gr7.eu-west-1.eks.amazonaws.com'
+    server: ' '
     namespace: omegabank
   syncPolicy:
     automated:
@@ -24,3 +24,5 @@ spec:
     syncOptions:
       - CreateNamespace=true
 
+
+#        sh "sed -E 's/tag:.+$/tag: '"$tag"'/g' k8s/bank/values.yaml"

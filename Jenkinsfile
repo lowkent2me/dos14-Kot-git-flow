@@ -43,9 +43,8 @@ pipeline {
       }
     }
       steps {
-        sh "sed -E 's/tag:.+$/tag: '"$tag"'/g' k8s/argoCD/123.yaml"
-        sh ""
-          }
+        sh "echo $GIT_COMMIT"
+      }
         }
       }
     }
