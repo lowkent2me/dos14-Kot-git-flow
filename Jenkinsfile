@@ -43,6 +43,7 @@ pipeline {
         }
       }
       steps {
+        script {
         def filename = 'k8s/bank/values.yaml'
         def data = readYaml file: filename
 
@@ -52,6 +53,7 @@ pipeline {
         sh "rm $filename"
         writeYaml file: filename, data: data
         sh "cat $filename"
+        }
       }
     }
   }
