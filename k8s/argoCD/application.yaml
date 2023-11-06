@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bank
+  namespace: omegabank
+spec:
+  project: omegabank
+  source:
+    repoURL: https://github.com/lowkent2me/dos14-Kot-git-flow.git
+    targetRevision: master
+    path: k8s/bank
+    chart: bank
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: omegabank
