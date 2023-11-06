@@ -43,12 +43,15 @@ pipeline {
         }
       }
       steps {
-        sh '''
-            sed -E 's/tag:.+$/tag: '"$GIT_COMMIT"'/g' k8s/bank/values.yaml
-            cat k8s/bank/values.yaml
-            git add .
-            git commit -m "Hello from Jenkins"
-        '''
+        def filename = 'k8s/bank/values.yaml'
+        def data = readYaml file: filename
+
+        // Change something in the file
+        data.image.tag = ${env.GIT_COMMIT}
+
+        sh "rm $filename"
+        writeYaml file: filename, data: data
+        sh "cat $filename"
       }
     }
   }
