@@ -44,7 +44,7 @@ pipeline {
       }
       steps {
         sh '''
-            sed -E 's/tag:.+$/tag: '"$GIT_COMMIT"'/g' k8s/bank/values.yaml > k8s/bank/values.yaml
+            sed -E 's/tag:.+$/tag: '"$GIT_COMMIT"'/g' k8s/bank/values.yaml
             cat k8s/bank/values.yaml
         '''
       }
