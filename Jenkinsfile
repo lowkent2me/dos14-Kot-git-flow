@@ -43,7 +43,6 @@ pipeline {
         }
       }
       steps {
-        sh "ssh -T git@github.com"
         sh "git checkout feature-CD"
         script {
         def filename = 'k8s/bank/values.yaml'
