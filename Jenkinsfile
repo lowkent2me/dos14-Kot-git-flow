@@ -44,6 +44,7 @@ pipeline {
       }
       steps {
         sh "git checkout feature-CD"
+        sh "git config --global pull.rebase true"
         sh "git pull origin"
         script {
         def filename = 'k8s/bank/values.yaml'
