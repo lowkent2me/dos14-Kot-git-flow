@@ -47,7 +47,6 @@ pipeline {
         script {
         def filename = 'k8s/bank/values.yaml'
         def data = readYaml file: filename
-
         // Change something in the file
         data.image.tag = "${env.GIT_COMMIT}"
 
