@@ -10,7 +10,7 @@ pipeline {
         }
         when {
           anyOf {
-            branch pattern: "feature*"
+            branch pattern: "feature"
             branch pattern: "fix*"
           }
         }
@@ -56,7 +56,6 @@ pipeline {
 
         sh('git config --global user.email "vitalikot1996@gmail.com" && git config --global user.name "Jenkins"')
         sh('git add .')
-        sh('git remote set-url origin git@github.com:lowkent2me/dos14-Kot-git-flow.git')
         sh('git commit -m "JENKINS: add image tag in helm chart tag for CD"')
         sh('git push origin feature-CD')
         }
