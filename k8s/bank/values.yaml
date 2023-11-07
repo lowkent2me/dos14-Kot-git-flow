@@ -2,7 +2,7 @@ replicaCount: 2
 image:
   repository: lowkent2me/bank
   pullPolicy: IfNotPresent
-  tag: sometag
+  tag: 6f11834b3f131008216e4462dcf6f3123c878319
 imagePullSecrets: []
 nameOverride: ''
 fullnameOverride: ''
