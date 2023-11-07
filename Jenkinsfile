@@ -60,7 +60,7 @@ pipeline {
             sh('git commit -m "JENKINS: add image tag in helm chart tag for CD"')
             sh('git remote set-url origin https://${SECRET}@github.com/lowkent2me/dos14-Kot-git-flow.git')
             sh('git push origin feature-CD')
-        }
+          }
         }
       }
     }
