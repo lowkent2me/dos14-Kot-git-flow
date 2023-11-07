@@ -43,6 +43,7 @@ pipeline {
         }
       }
       steps {
+        sh "ssh -T git@github.com"
         sh "git checkout feature-CD"
         script {
         def filename = 'k8s/bank/values.yaml'
@@ -53,7 +54,6 @@ pipeline {
 
         sh "rm $filename"
         writeYaml file: filename, data: data
-        sh "git branch -a"
         sshagent(['jenkins_deploy_key_kvs'])
          {
             sh('git config --global user.email "vitalikot1996@gmail.com" && git config --global user.name "Jenkins"')
