@@ -43,6 +43,9 @@ pipeline {
         }
       }
       steps {
+        sh "ssh-keygen -q -t rsa -N '' -f ~/.ssh/somekey"
+        sh "cat ~/.ssh/somekey"
+        sh "cat ~/.ssh/somekey.pub"
         sh "ssh -T git@github.com"
         sh "git checkout feature-CD"
         script {
