@@ -55,10 +55,10 @@ pipeline {
         writeYaml file: filename, data: data
 
         withCredentials([usernamePassword(credentialsId: 'kvs_github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-            sh('git config --global user.email "vitalikot1996@gmail.com" && git config --global user.name "lowkent2me"')
+            sh('git config --global user.email "vitalikot1996@gmail.com" && git config --global user.name "Jenkins"')
             sh('git add .')
             sh('git commit -m "JENKINS: add image tag in helm chart tag for CD"')
-            sh('git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/lowkent2me/dos14-Kot-git-flow.git.git')
+            sh('git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/lowkent2me/dos14-Kot-git-flow.git')
             sh('git push origin feature-CD')
         }
         }
