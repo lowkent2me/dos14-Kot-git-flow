@@ -56,7 +56,7 @@ pipeline {
         sshagent(['jenkins_deploy_key_kvs'])
          {
             sh('git add .')
-            sh('git commit -m "add image teg in helm chart tag for CD"')
+            sh('git commit -m "JENKINS: add image tag in helm chart tag for CD"')
             sh('git push origrin/feature-CD')
          }
         }
