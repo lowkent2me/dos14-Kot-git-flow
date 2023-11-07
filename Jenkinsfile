@@ -56,8 +56,9 @@ pipeline {
         sshagent(['jenkins_deploy_key_kvs'])
          {
             sh('git config --global user.email "vitalikot1996@gmail.com" && git config --global user.name "Jenkins"')
-            sh('git branch')
-            sh('git status')
+            sh('git add .')
+            sh('git commit -m "JENKINS: add image tag in helm chart tag for CD"')
+            sh('git push origin feature-CD')
          }
         }
       }

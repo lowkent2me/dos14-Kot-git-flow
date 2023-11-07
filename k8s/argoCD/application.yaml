@@ -32,6 +32,4 @@ spec:
 #  git commit -m "Hello from Jenkins"
 #  '''
 
-#  sh('git add .')
-#sh('git commit -m "JENKINS: add image tag in helm chart tag for CD"')
-#  sh('git push origin feature-CD')
+
