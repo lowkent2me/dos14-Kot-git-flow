@@ -31,4 +31,7 @@ spec:
 #  git add .
 #  git commit -m "Hello from Jenkins"
 #  '''
+#  sshagent(['jenkins_deploy_key_kvs'])
+#  {
 
+#}
