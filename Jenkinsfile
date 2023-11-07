@@ -37,7 +37,7 @@ pipeline {
       }
     }
     stage('Update Helm Chart') {
-      when { pipeline.stages.2.was_executed }
+      when { expression { build == ${env.GIT_COMMIT} } }
       steps {
         sh "git checkout feature-CD"
         sh "git config --global pull.rebase true"
