@@ -18,7 +18,7 @@ pipeline {
           sh "pip install poetry"
           sh "poetry install --with dev"
           sh "poetry run -- black --check *.py"
-          script { def build = null }
+          script { build = false }
         }
       }
       stage('Build') {
@@ -32,13 +32,13 @@ pipeline {
           def image = docker.build "lowkent2me/bank:${env.GIT_COMMIT}"
           docker.withRegistry('','dockerhub-kvs') {
             image.push()
+          build = true
           }
-          def build = ${env.GIT_COMMIT}
         }
       }
     }
     stage('Update Helm Chart') {
-      when { expression { ${build} == ${env.GIT_COMMIT} } }
+      when { expression { build == true } }
       steps {
         sh "git checkout feature-CD"
         sh "git config --global pull.rebase true"
