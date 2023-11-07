@@ -53,7 +53,7 @@ pipeline {
         sh "rm $filename"
         writeYaml file: filename, data: data
         sh "cat $filename"
-        sh "git branch -b"
+        sh "git branch -a"
         sshagent(['jenkins_deploy_key_kvs'])
          {
             sh('git config --global user.email "vitalikot1996@gmail.com" && git config --global user.name "Jenkins"')
