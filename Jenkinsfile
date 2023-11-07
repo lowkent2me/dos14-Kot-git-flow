@@ -53,14 +53,15 @@ pipeline {
 
         sh "rm $filename"
         writeYaml file: filename, data: data
-        }
 
-        withCredentials([string(credentialsId: 'my-secret', variable: 'SECRET')] {
-            sh('git config --global user.email "vitalikot1996@gmail.com" && git config --global user.name "Jenkins"')
-            sh('git add .')
-            sh('git commit -m "JENKINS: add image tag in helm chart tag for CD"')
-            sh('git remote set-url origin https://${SECRET}@github.com/lowkent2me/dos14-Kot-git-flow.git')
-            sh('git push origin feature-CD')
+        sshagent(['jenkins_deploy_key_kvs'])
+                 {
+                    sh('git config --global user.email "vitalikot1996@gmail.com" && git config --global user.name "Jenkins"')
+                    sh('git add .')
+                    sh('git remote set-url origin git@github.com:lowkent2me/dos14-Kot-git-flow.git')
+                    sh('git commit -m "JENKINS: add image tag in helm chart tag for CD"')
+                    sh('git push origin feature-CD')
+                 }
         }
       }
     }
