@@ -43,6 +43,7 @@ pipeline {
         }
       }
       steps {
+        sh "whoami && hostname"
         sh "git checkout feature-CD"
         script {
         def filename = 'k8s/bank/values.yaml'
@@ -53,7 +54,6 @@ pipeline {
 
         sh "rm $filename"
         writeYaml file: filename, data: data
-        sh "cat $filename"
         sh "git branch -a"
         sshagent(['jenkins_deploy_key_kvs'])
          {
