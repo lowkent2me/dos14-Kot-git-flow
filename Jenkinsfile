@@ -33,13 +33,13 @@ pipeline {
           def image = docker.build "lowkent2me/bank:${env.GIT_COMMIT}"
           docker.withRegistry('','dockerhub-kvs') {
             image.push()
-          build = true
+          build = "${env.GIT_COMMIT}"
           }
         }
       }
     }
     stage('Update Helm Chart') {
-      when { expression { build == true } }
+      when { expression { build == "${env.GIT_COMMIT}" } }
       steps {
         sh "git checkout feature-CD"
         sh "git config --global pull.rebase true"
