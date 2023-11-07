@@ -55,6 +55,7 @@ pipeline {
         sh "cat $filename"
         sshagent(['jenkins_deploy_key_kvs'])
          {
+            sh('ssh -T git@github.com -Y')
             sh('git config --global user.email "vitalikot1996@gmail.com" && git config --global user.name "Jenkins"')
             sh('git add .')
             sh('git commit -m "JENKINS: add image tag in helm chart tag for CD"')
