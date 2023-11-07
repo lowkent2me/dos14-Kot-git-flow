@@ -44,6 +44,7 @@ pipeline {
       }
       steps {
         sh "git checkout feature-CD"
+        sh "git pull origin"
         script {
         def filename = 'k8s/bank/values.yaml'
         def data = readYaml file: filename
