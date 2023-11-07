@@ -32,5 +32,3 @@ spec:
 #  git commit -m "Hello from Jenkins"
 #  '''
 
-#        sh('git remote set-url origin git@github.com:lowkent2me/dos14-Kot-git-flow.git')
-
