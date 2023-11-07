@@ -61,7 +61,7 @@ pipeline {
             sh('git add .')
             sh('git remote set-url origin git@github.com:lowkent2me/dos14-Kot-git-flow.git')
             sh('git commit -m "JENKINS: add image tag in helm chart tag for CD"')
-            sh('git push remotes/origin/feature-CD feature-CD')
+            sh('git push origin feature-CD')
          }
         }
       }
