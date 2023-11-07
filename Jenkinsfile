@@ -43,7 +43,6 @@ pipeline {
         }
       }
       steps {
-        sh "whoami && hostname"
         sh "git checkout feature-CD"
         script {
         def filename = 'k8s/bank/values.yaml'
