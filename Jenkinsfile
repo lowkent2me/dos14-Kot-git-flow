@@ -38,7 +38,7 @@ pipeline {
     }
     stage('Update Helm Chart') {
       when {
-        if build == ${env.GIT_COMMIT}
+        if (build == ${env.GIT_COMMIT})
       }
       steps {
         sh "git checkout feature-CD"
