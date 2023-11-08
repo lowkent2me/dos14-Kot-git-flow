@@ -25,7 +25,6 @@ pipeline {
       when {
         anyOf {
           branch pattern: "master"
-          branch pattern: "feature-CD"
         }
       }
       steps {
