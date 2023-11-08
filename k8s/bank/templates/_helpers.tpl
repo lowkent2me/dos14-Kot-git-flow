@@ -34,9 +34,6 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "bank.labels" -}}
-{{/*
-helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-*/}}
 {{ include "bank.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
