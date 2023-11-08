@@ -16,7 +16,7 @@ spec:
       releaseName: omegabank-bank
   destination:
     namespace: omegabank
-    name: dos14
+    name: in-cluster
   syncPolicy:
     automated:
       prune: true
