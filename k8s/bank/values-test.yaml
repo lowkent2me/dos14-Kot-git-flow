@@ -29,7 +29,7 @@ podAnnotations: {}
 podLabels: {}
 
 podSecurityContext: {}
-  # fsGroup: 2000
+# fsGroup: 2000
 
 securityContext: {}
   # capabilities:
@@ -37,7 +37,7 @@ securityContext: {}
   #   - ALL
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
-  # runAsUser: 1000
+# runAsUser: 1000
 
 service:
   type: ClusterIP
@@ -48,22 +48,23 @@ service:
 ingress:
   className: nginx
   annotations: {
-      nginx.ingress.kubernetes.io/use-regex: "true",
-      nginx.ingress.kubernetes.io/rewrite-target: /$1,
-#      nginx.ingress.kubernetes.io/upstream-vhost: "omegabank.smodata.net",
-      nginx.ingress.kubernetes.io/service-upstream: "true",
+    nginx.ingress.kubernetes.io/use-regex: "true",
+    nginx.ingress.kubernetes.io/rewrite-target: /$1,
+    #      nginx.ingress.kubernetes.io/upstream-vhost: "omegabank.smodata.net",
+    nginx.ingress.kubernetes.io/service-upstream: "true",
+    cert-manager.io/cluster-issuer: letsencrypt-prod,
   }
     # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  # kubernetes.io/tls-acme: "true"
   hosts:
-      host: api.omega.smodata.net
-      http:
-        paths:
-            path: /bank(.*)
-            pathType: ImplementationSpecific
-        port: 80
-  tls: []
-  #  - secretName: chart-example-tls
+    host: api.omega.smodata.net
+    http:
+      paths:
+        path: /bank(.*)
+        pathType: ImplementationSpecific
+      port: 80
+  tls:
+    secretName: omega
   #    hosts:
   #      - chart-example.local
 
@@ -77,7 +78,7 @@ resources: {}
   #   memory: 128Mi
   # requests:
   #   cpu: 100m
-  #   memory: 128Mi
+#   memory: 128Mi
 
 autoscaling:
   enabled: false
@@ -113,28 +114,28 @@ deployment:
     maxSurge: 2
   template:
     specNginx:
-            name: nginx
-            image: nginx:1.25.2
-            ports:
-                containerPort: 80
-                name: http
-                protocol: TCP
+      name: nginx
+      image: nginx:1.25.2
+      ports:
+        containerPort: 80
+        name: http
+        protocol: TCP
   env:
-     name_base: PG_DATABASE
-     name_base_value: omegabank
-     username_db: PG_USER
-     usernameKeyRef:
-       username: username
-       password: password
-       name: omega-db-creds
-     password: PG_PASSWORD
-     hostname: PG_HOST
-     hostname_value: omegabank-rds-tf.cearikylb8tb.eu-west-1.rds.amazonaws.com
-     port_name: PG_PORT
-     port_value: "5432"
+    name_base: PG_DATABASE
+    name_base_value: omegabank
+    username_db: PG_USER
+    usernameKeyRef:
+      username: username
+      password: password
+      name: omega-db-creds
+    password: PG_PASSWORD
+    hostname: PG_HOST
+    hostname_value: omegabank-rds-tf.cearikylb8tb.eu-west-1.rds.amazonaws.com
+    port_name: PG_PORT
+    port_value: "5432"
   volume_configMap: nginx-config
 
 labels:
-    app: bank
-    bank: omegabank
-    env: test
+  app: bank
+  bank: omegabank
+  env: test
