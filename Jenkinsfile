@@ -44,7 +44,7 @@ pipeline {
         sh "git config --global pull.rebase true"
         sh "git pull origin"
         script {
-        def filename = 'k8s/bank/values.yaml'
+        def filename = 'k8s/bank/values-prd.yaml'
         def data = readYaml file: filename
 
         // Change something in the file

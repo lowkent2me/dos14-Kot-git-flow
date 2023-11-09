@@ -13,7 +13,7 @@ spec:
     targetRevision: feature-CD
     helm:
       valueFiles:
-        - /k8s/bank/values.yaml
+        - /k8s/bank/values-prd.yaml
       releaseName: omegabank-bank
   destination:
     namespace: omegabank
