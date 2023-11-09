@@ -64,7 +64,7 @@ ingress:
         pathType: ImplementationSpecific
       port: 80
   tls:
-    secretName: omegabank
+    secretName: omega
   #    hosts:
   #      - chart-example.local
 
