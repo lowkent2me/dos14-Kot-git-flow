@@ -50,7 +50,7 @@ spec:
           - name: {{ .Values.deployment.env.hostname }}
             value: {{ .Values.deployment.env.hostname_value }}
           - name: {{ .Values.deployment.env.port_name }}
-            value: {{ .Values.deployment.env.port_value }}
+            value: {{ .Values.deployment.env.port_value | squote }}
       volumes:
         - configMap:
             name: {{ include "bank.name" . }}-{{ .Values.deployment.volume_configMap }}
