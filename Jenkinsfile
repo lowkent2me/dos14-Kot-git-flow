@@ -40,7 +40,7 @@ pipeline {
     stage('Update Helm Chart') {
       when {
         expression {
-          build == "${env.GIT_COMMIT}" &&  env.BRANCH_NAME == "master"
+          build == "${env.GIT_COMMIT}" &&  "${env.BRANCH_NAME}" == "master"
         }
        }
       steps {
@@ -60,7 +60,7 @@ pipeline {
           withCredentials([string(credentialsId: 'kvs_github_token', variable: 'SECRET')]) {
                 sh('git config --global user.email "vitalikot1996@gmail.com" && git config --global user.name "Jenkins"')
                 sh('git add .')
-                sh('git commit -m "JENKINS: add new image tag ("${env.GIT_COMMIT}") tag in helm chart tag for CD"')
+                sh('git commit -m "JENKINS: add new image tag in helm chart for CD"')
                 sh('git remote set-url origin https://${SECRET}@github.com/lowkent2me/dos14-Kot-git-flow.git')
                 sh('git push')
           }
