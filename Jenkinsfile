@@ -40,7 +40,7 @@ pipeline {
     stage('Update Helm Chart') {
       when {
         expression {
-          build == "${env.GIT_COMMIT}" && "${env.BRANCH_NAME}" == master
+          return (build == "${env.GIT_COMMIT}" && "${env.BRANCH_NAME}" == "master")
         }
        }
       steps {
