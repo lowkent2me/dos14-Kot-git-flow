@@ -9,7 +9,7 @@
       ansible.builtin.group:
         name: kot
         state: present
-        
+
     - name: create user bank
       user:
         name: bank_kot
@@ -47,18 +47,18 @@
   tasks:
     - name: clone repo
       git:
-          repo: git@github.com:lowkent2me/dos14-Kot-git-flow.git
-          key_file: /home/bank_kot/.ssh/keys
-          dest: /home/bank_kot/project
-          version: "{{ BRANCH }}"
-          force: yes
-          accept_hostkey: yes
+        repo: git@github.com:lowkent2me/dos14-Kot-git-flow.git
+        key_file: /home/bank_kot/.ssh/keys
+        dest: /home/bank_kot/project
+        version: "{{ BRANCH }}"
+        force: yes
+        accept_hostkey: yes
       notify:
-          - restart bank
+        - restart bank
 
     - name: add systemd ini-file
       copy:
-        src: unit/banktms.service
+        src: unit/banktms-https.service
         dest: /etc/systemd/system/
 
     - name: touch secretfile
@@ -80,13 +80,13 @@
 
     - name: start banktms service
       systemd:
-        name: banktms
+        name: banktms-https
         state: started
         daemon-reload: true
 
   handlers:
     - name: restart bank
       systemd:
-        name: banktms
+        name: banktms-https
         state: restarted
         daemon-reload: true

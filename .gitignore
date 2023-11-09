@@ -1,2 +1,8 @@
 .env
 *__pycache*
+.idea
+__pycache__
+/Ansible/group_vars/
+nginx/crt
+nginx/logs
+nginx/sites-enabled
