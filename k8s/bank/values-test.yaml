@@ -138,4 +138,4 @@ deployment:
 labels:
   app: bank
   bank: omegabank
-  env: prd
+  env: test
