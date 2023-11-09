@@ -4,3 +4,4 @@ __pycache__
 nginx/crt
 nginx/logs
 nginx/sites-enabled
+/k8s/bank/secrets.yaml
