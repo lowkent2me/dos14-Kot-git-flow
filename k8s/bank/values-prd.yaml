@@ -1,50 +1,25 @@
-# Default values for bank.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 replicaCount: 2
-
 image:
   repository: lowkent2me/bank
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: latest
-
+  tag: a75e79a712b63f9b35d3e41bf03e78ac8b7d0d32
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
+nameOverride: ''
+fullnameOverride: ''
 serviceAccount:
-  # Specifies whether a service account should be created
   create: true
-  # Automatically mount a ServiceAccount's API credentials?
   automount: true
-  # Annotations to add to the service account
   annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
   name: bank-service-acc
-
 podAnnotations: {}
 podLabels: {}
-
 podSecurityContext: {}
-  # fsGroup: 2000
-
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
 service:
   type: ClusterIP
   port: 80
   protocol: TCP
   targetport: 80
-
 ingress:
   className: nginx
   annotations:
@@ -59,22 +34,7 @@ ingress:
         pathType: ImplementationSpecific
       port: 80
   tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-
 resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
 autoscaling:
   enabled: false
   minReplicas: 1
@@ -93,27 +53,26 @@ deployment:
     maxSurge: 2
   template:
     specNginx:
-            name: nginx
-            image: nginx:1.25.2
-            ports:
-                containerPort: 80
-                name: http
-                protocol: TCP
+      name: nginx
+      image: nginx:1.25.2
+      ports:
+        containerPort: 80
+        name: http
+        protocol: TCP
   env:
-     name_base: PG_DATABASE
-     name_base_value: omegabank
-     username_db: PG_USER
-     usernameKeyRef:
-       username: username
-       password: password
-       name: omega-db-creds
-     password: PG_PASSWORD
-     hostname: PG_HOST
-     hostname_value: omegabank-rds-tf.cearikylb8tb.eu-west-1.rds.amazonaws.com
-     port_name: PG_PORT
-     port_value: "5432"
+    name_base: PG_DATABASE
+    name_base_value: omegabank
+    username_db: PG_USER
+    usernameKeyRef:
+      username: username
+      password: password
+      name: omega-db-creds
+    password: PG_PASSWORD
+    hostname: PG_HOST
+    hostname_value: omegabank-rds-tf.cearikylb8tb.eu-west-1.rds.amazonaws.com
+    port_name: PG_PORT
+    port_value: '5432'
   volume_configMap: nginx-config
-
 labels:
   app: bank
   bank: omegabank
